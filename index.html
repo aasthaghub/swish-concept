@@ -1,0 +1,649 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Swish Concept Prototype</title>
+<style>
+/* Palette: ONE green family + ONE warm accent (saffron). Neutrals do the rest. */
+:root{
+  --g:#16a34a;--g2:#0f7a37;--gd:#0a3b24;--gl:#e8f7ee;--gm:#cdeedb;
+  --sf:#f2a516;--sfd:#8a5a00;--sfl:#fff3d6;--cream:#fbf8f0;
+  --ink:#15201a;--mut:#667069;--line:#e5eae6;--red:#dc2626;--bg:#eef1ef;--blue:#2563eb;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+.wrap{display:flex;gap:32px;justify-content:center;align-items:flex-start;padding:24px 16px;flex-wrap:wrap}
+.phone{width:390px;height:min(820px,calc(100vh - 48px));min-height:640px;background:#fff;border-radius:42px;border:10px solid #101512;position:relative;overflow:hidden;box-shadow:0 30px 60px -20px rgba(0,0,0,.35);flex:none}
+.status{height:26px;background:var(--g);color:#fff;font-size:12px;font-weight:600;display:flex;justify-content:space-between;align-items:center;padding:0 22px}
+.screen{position:absolute;top:26px;bottom:0;left:0;right:0;overflow-y:auto;overflow-x:hidden;background:#fff;scrollbar-width:none}
+.screen::-webkit-scrollbar{display:none}
+.hdr{background:var(--g);color:#fff;padding:10px 14px 12px;position:sticky;top:0;z-index:5}
+.hdr .top{display:flex;justify-content:space-between;align-items:center}
+.hdr h1{font-size:20px;font-weight:800;letter-spacing:-.3px}
+.hdr .loc{font-size:11px;opacity:.9;margin-top:1px}
+.earn{background:#fff;color:var(--g2);font-weight:800;font-size:10px;padding:5px 8px;border-radius:10px}
+.search{background:#fff;color:var(--mut);border-radius:12px;padding:10px 12px;font-size:13px;margin-top:10px;display:flex;justify-content:space-between;align-items:center}
+.vegt{font-size:10px;font-weight:700;color:var(--g2);border:1px solid var(--g);border-radius:8px;padding:1px 6px}
+.vegt.on{background:var(--g);color:#fff}
+section{padding:16px 14px 2px;position:relative}
+.sh{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;gap:8px}
+.sh h2{font-size:16px;font-weight:800;letter-spacing:-.2px}
+.sh small{color:var(--g2);font-weight:700;font-size:12px;white-space:nowrap}
+.sub{font-size:11.5px;color:var(--mut);margin-top:2px;font-weight:500;line-height:1.35}
+.hs{display:flex;gap:10px;overflow-x:auto;padding-bottom:10px;scrollbar-width:none;margin:0 -14px;padding-left:14px;padding-right:14px}
+.hs::-webkit-scrollbar{display:none}
+.pills{display:flex;gap:8px;overflow-x:auto;padding:10px 14px;background:#fff;position:sticky;top:106px;z-index:4;border-bottom:1px solid var(--line);scrollbar-width:none}
+.pills::-webkit-scrollbar{display:none}
+.pill{flex:none;border:1.5px solid var(--line);border-radius:99px;padding:7px 12px;font-size:12.5px;font-weight:700;background:#fff;white-space:nowrap}
+.pill.on{background:var(--gd);color:#fff;border-color:var(--gd)}
+/* clock */
+.clock{margin:12px 14px 0;background:linear-gradient(100deg,var(--gd),var(--g2));color:#fff;border-radius:16px;padding:12px 14px;display:flex;gap:12px;align-items:center;position:relative}
+.clock .ic{font-size:26px}.clock b{display:block;font-size:13.5px;margin-bottom:2px}.clock span{font-size:12.5px;opacity:.95;line-height:1.35}
+.fest{margin:8px 14px 0;background:var(--sfl);border:1px solid #f4d58a;border-radius:14px;padding:10px 12px;position:relative}
+.fest b{font-size:12.5px;color:var(--sfd)}.fest .sub{color:#7a5a12}
+.fest .r{display:flex;justify-content:space-between;align-items:center;margin-top:6px;font-size:11.5px;font-weight:700;color:var(--sfd)}
+.sw{width:34px;height:20px;border-radius:99px;background:#cfd6d2;position:relative;transition:.2s;flex:none}
+.sw:after{content:"";position:absolute;left:3px;top:3px;width:14px;height:14px;border-radius:50%;background:#fff;transition:.2s}
+.sw.on{background:var(--g)}.sw.on:after{left:17px}
+/* order strip */
+.live{margin:10px 14px 0;background:var(--gd);color:#fff;border-radius:16px;padding:10px 12px;display:flex;align-items:center;gap:10px;position:relative}
+.live .t{flex:1}.live b{font-size:13px;display:block}.live small{font-size:11px;opacity:.85}
+.otpchip{background:#fff;color:var(--gd);border-radius:12px;padding:5px 10px;text-align:center;font-weight:900;letter-spacing:3px;font-size:15px;line-height:1}
+.otpchip small{display:block;font-size:8.5px;letter-spacing:.6px;font-weight:800;opacity:.7;margin-bottom:2px}
+/* cards */
+.card{flex:none;width:150px;border:1px solid var(--line);border-radius:16px;padding:8px;background:#fff;position:relative}
+.card.dark{background:var(--gd);border-color:var(--gd);color:#fff;width:158px}
+.img{height:84px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:44px;position:relative}
+.vd{position:absolute;top:6px;left:6px;width:14px;height:14px;border:1.5px solid var(--g);background:#fff;border-radius:3px;display:flex;align-items:center;justify-content:center}
+.vd i{width:7px;height:7px;border-radius:50%;background:var(--g)}
+.vd.nv{border-color:var(--red)}.vd.nv i{background:var(--red)}
+.vd.eg{border-color:var(--sf)}.vd.eg i{background:var(--sf)}
+.tag{position:absolute;left:6px;bottom:6px;font-size:9.5px;font-weight:800;border-radius:6px;padding:2px 6px;background:var(--sfl);color:var(--sfd)}
+.tag.g{background:var(--gl);color:var(--g2)}
+.nm{font-size:12.5px;font-weight:700;margin:7px 2px 3px;line-height:1.25;min-height:31px}
+.macro{font-size:11px;font-weight:600;color:var(--mut);margin:0 2px 5px}
+.macro b.hi{color:#fff;background:var(--g);padding:1px 6px;border-radius:6px;margin-right:2px;font-weight:800}
+.macro b{font-weight:800;color:var(--ink)}
+.card.dark .macro{color:#c9ecd7}.card.dark .macro b{color:#fff}.card.dark .macro b.hi{background:#fff;color:var(--gd)}
+.row{display:flex;justify-content:space-between;align-items:center;margin:0 2px;gap:6px}
+.pr{font-weight:800;font-size:13.5px}
+.add{border:1.5px solid var(--g);color:var(--g2);font-weight:800;font-size:12px;padding:5px 14px;border-radius:9px;background:#fff}
+.stp{display:flex;align-items:center;background:var(--g);color:#fff;border-radius:9px;font-weight:800;font-size:13px}
+.stp button{padding:4px 9px;font-size:15px;color:#fff}.stp span{min-width:14px;text-align:center}
+.vlink{font-size:10.5px;color:var(--g2);font-weight:700;margin:-2px 2px 6px;display:block;cursor:pointer}
+.card.dark .vlink{color:#8be0ac}
+.mini{flex:none;width:128px;border:1px solid var(--line);border-radius:14px;padding:7px;background:#fff}
+.mini .img{height:58px;font-size:32px}.mini .nm{font-size:11.5px;min-height:0;margin:5px 1px 2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mini .sm{font-size:10px;color:var(--mut);font-weight:600;margin:0 1px 5px}
+.mini .row{margin:0 1px}.mini .add{padding:3px 10px;font-size:11px}
+/* macro balance bar */
+.bar{display:flex;height:7px;border-radius:9px;overflow:hidden;margin:2px 2px 4px}
+.bar i{display:block}
+.bl{font-size:9.5px;color:var(--mut);font-weight:700;margin:0 2px 5px;display:flex;gap:6px;flex-wrap:wrap}
+.bl em{font-style:normal;display:flex;align-items:center;gap:2px}.bl em:before{content:"";width:6px;height:6px;border-radius:50%;background:var(--c)}
+/* trending */
+.trend{display:flex;gap:8px;overflow-x:auto;margin:0 -14px;padding:0 14px 10px;scrollbar-width:none}
+.trend::-webkit-scrollbar{display:none}
+.tr{flex:none;display:flex;gap:8px;align-items:center;background:var(--cream);border:1px solid #efe6cc;border-radius:14px;padding:8px 10px;font-size:11.5px;font-weight:600}
+.tr .e{font-size:22px}.tr b{display:block;font-size:12px}
+.lv{display:inline-flex;gap:5px;align-items:center;font-size:11px;font-weight:700;color:var(--red)}
+.lv:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--red);animation:pulse 1.2s infinite}
+@keyframes pulse{50%{opacity:.25}}
+/* promo strip (replaces giant banner) */
+.promo{margin:14px 14px 0;background:var(--sfl);border:1px solid #f4d58a;border-radius:14px;padding:9px 12px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.promo b{font-size:12.5px;color:var(--sfd)}.promo span{font-size:10.5px;color:#7a5a12;font-weight:600;display:block}
+.timer{border:1.5px solid var(--sfd);color:var(--sfd);border-radius:10px;font-weight:800;font-size:11.5px;padding:4px 7px}
+/* categories */
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;position:relative}
+.pt{border-radius:16px;padding:12px;min-height:84px;display:flex;flex-direction:column;justify-content:space-between;text-align:left}
+.pt .e{font-size:26px}.pt b{font-size:14px;display:block}.pt span{font-size:11px;font-weight:600;opacity:.85}
+.pt.h{background:var(--g);color:#fff}.pt.gf{background:var(--gl);color:var(--gd);border:1.5px solid var(--g)}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px 6px;padding-bottom:12px}
+.cat{text-align:center;font-size:10.5px;font-weight:600;position:relative;line-height:1.2}
+.cat .ci{width:60px;height:60px;margin:0 auto 4px;border-radius:50%;background:var(--cream);border:1px solid #efe6cc;display:flex;align-items:center;justify-content:center;font-size:30px;position:relative}
+.cat.prot .ci{background:var(--gd);border-color:var(--gd)}
+.cat.prot .badge{position:absolute;top:-4px;right:-6px;background:var(--red);color:#fff;font-weight:800;font-size:10.5px;border-radius:99px;padding:3px 6px;border:2px solid #fff}
+.cat.prot span{font-weight:800;color:var(--gd)}
+/* the four tiles: same size, same radius, one family */
+.t4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding-bottom:12px;position:relative}
+.t4 button{border-radius:14px;padding:10px 4px 8px;text-align:center;font-size:10.5px;font-weight:800;line-height:1.2}
+.t4 .e{display:block;font-size:26px;margin-bottom:4px}
+.t4 .a{background:var(--gd);color:#fff}.t4 .b{background:var(--gl);color:var(--g2)}.t4 .c{background:var(--sfl);color:var(--sfd)}.t4 .d{background:var(--cream);color:var(--ink);border:1.5px solid var(--sf)}
+.t4 small{display:block;font-weight:600;font-size:9px;opacity:.8;margin-top:1px}
+/* munchies */
+.chips{display:flex;gap:6px;overflow-x:auto;margin:0 -14px 10px;padding:0 14px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1.5px solid var(--line);border-radius:99px;padding:5px 11px;font-size:11.5px;font-weight:700}
+.chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding-bottom:10px}
+.g2 .card{width:auto}
+/* list rows */
+.lrow{display:flex;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line)}
+.lrow .img{width:92px;height:92px;flex:none;font-size:48px}
+.lrow .info{flex:1;min-width:0}.lrow .nm{margin:0 0 3px;min-height:0;font-size:14px}
+.lrow .d{font-size:11.5px;color:var(--mut);line-height:1.35;margin-bottom:5px}
+.mq{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}
+.mq span{font-size:10.5px;font-weight:700;background:#f2f5f3;border-radius:6px;padding:2px 7px}
+.mq .pg{background:var(--g);color:#fff}
+/* sticky bottom, menu fab */
+.cartbar{position:absolute;bottom:12px;left:12px;right:12px;background:var(--g);color:#fff;border-radius:16px;padding:10px 12px 10px 14px;display:flex;justify-content:space-between;align-items:center;font-weight:800;z-index:20;box-shadow:0 10px 24px -8px rgba(15,122,55,.7);animation:up .25s;gap:8px}
+@keyframes up{from{transform:translateY(20px);opacity:0}}
+.cartbar small{display:block;font-weight:600;font-size:11px;opacity:.9}
+.cartbar .one{background:#fff;color:var(--g2);border-radius:11px;padding:8px 12px;font-size:13px}
+.fab{position:absolute;right:14px;bottom:14px;z-index:19;background:var(--ink);color:#fff;border-radius:99px;padding:10px 16px;font-weight:800;font-size:13px;box-shadow:0 8px 20px -6px rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:.2s}
+.fab.up{bottom:78px}
+.scrolled .fab{opacity:1;pointer-events:auto}
+.btn{background:var(--g);color:#fff;border-radius:14px;padding:14px;font-weight:800;font-size:15px;width:100%}
+.btn.ghost{background:#fff;color:var(--g2);border:1.5px solid var(--g)}
+.back{display:flex;align-items:center;gap:10px;padding:12px 14px;font-weight:800;font-size:16px;border-bottom:1px solid var(--line);position:sticky;top:0;background:#fff;z-index:6}
+.back button{width:32px;height:32px;border-radius:50%;background:#f2f5f3;font-size:16px}
+.fchips{display:flex;gap:8px;padding:12px 14px}
+.fc{display:flex;gap:6px;align-items:center;border:1.5px solid var(--line);border-radius:10px;padding:6px 10px;font-size:12.5px;font-weight:700}
+.fc.on{background:var(--gl);border-color:var(--g)}
+.protban{background:var(--sfl);padding:18px 14px;font-size:26px;font-weight:900;color:var(--sfd);line-height:1;letter-spacing:-.5px}
+.protban em{color:var(--gd);font-style:normal}
+/* sheets */
+.ov{position:absolute;inset:0;background:rgba(10,20,14,.55);z-index:40;display:flex;align-items:flex-end;animation:fade .2s}
+@keyframes fade{from{opacity:0}}
+.sheet{background:#fff;width:100%;border-radius:24px 24px 0 0;padding:18px 16px 20px;max-height:88%;overflow-y:auto;animation:up .25s}
+.sheet h3{font-size:18px;font-weight:800;margin-bottom:4px}
+.sheet p{font-size:13px;color:var(--mut);line-height:1.45;margin-bottom:12px}
+.opt{width:100%;text-align:left;border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:8px;display:flex;gap:12px;align-items:center}
+.opt:hover,.opt.on{border-color:var(--g);background:var(--gl)}
+.opt .oi{font-size:22px}.opt b{display:block;font-size:14px}.opt span{font-size:11.5px;color:var(--mut)}
+.macrogrid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:12px 0}
+.mg{background:#f5f8f6;border-radius:12px;padding:9px 2px;text-align:center}
+.mg b{display:block;font-size:15px}.mg span{font-size:10px;color:var(--mut);font-weight:600}
+.mg.hi{background:var(--g);color:#fff}.mg.hi span{color:#d1f5df}
+.menurow{display:flex;justify-content:space-between;align-items:center;padding:11px 4px;border-bottom:1px solid var(--line);font-size:14px;font-weight:600;width:100%}
+.menurow span{color:var(--mut);font-size:12.5px;font-weight:700}
+.menurow.top{color:var(--g2);font-weight:800}
+/* cart */
+.box{margin:12px 14px;border:1px solid var(--line);border-radius:16px;padding:12px}
+.li{display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px dashed var(--line)}
+.li:last-child{border:0}
+.li .e{font-size:28px}.li .n{flex:1;font-size:13px;font-weight:700}.li .n small{display:block;font-weight:600;color:var(--mut);font-size:11px}
+.free{background:var(--gl);border-radius:12px;padding:8px 10px;margin-top:6px;border:1px dashed var(--g)}
+.free small{color:var(--g2);font-weight:700}
+.bill div{display:flex;justify-content:space-between;font-size:13px;padding:4px 0}
+.bill .tot{font-weight:800;font-size:15px;border-top:1px solid var(--line);margin-top:4px;padding-top:8px}
+.map{height:260px;background:#e8efe9;position:relative;overflow:hidden}
+.map svg{position:absolute;inset:0;width:100%;height:100%}
+.pin2{position:absolute;left:50%;top:50%;transform:translate(-50%,-100%);font-size:38px;filter:drop-shadow(0 6px 4px rgba(0,0,0,.3));animation:bob 1.4s infinite}
+@keyframes bob{50%{transform:translate(-50%,-112%)}}
+.input{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:11px 12px;font:inherit;font-size:13px;margin-top:8px}
+.eta{background:var(--g);color:#fff;padding:14px 16px 20px}
+.eta .big{font-size:38px;font-weight:900;letter-spacing:-1px}
+.steps{padding:6px 16px}
+.stepi{display:flex;gap:12px;padding:8px 0;position:relative}
+.stepi:not(:last-child):after{content:"";position:absolute;left:11px;top:30px;bottom:-6px;width:2px;background:var(--line)}
+.stepi.done:not(:last-child):after{background:var(--g)}
+.dot{width:24px;height:24px;border-radius:50%;background:#eef2ef;color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center;flex:none;font-weight:800}
+.stepi.done .dot{background:var(--g)}
+.stepi.now .dot{background:#fff;border:3px solid var(--g);animation:pulse 1s infinite}
+.stepi b{font-size:13.5px;display:block}.stepi small{font-size:11.5px;color:var(--mut)}
+.otp{background:var(--gd);color:#fff;border-radius:16px;margin:12px 14px;padding:14px;text-align:center}
+.otp .code{font-size:34px;letter-spacing:10px;font-weight:900;margin:6px 0}
+.otp small{opacity:.85;font-size:11.5px}
+.ok{color:var(--g2);font-weight:800}
+.toast{position:absolute;left:14px;right:14px;top:40px;background:#101512;color:#fff;border-radius:12px;padding:10px 12px;font-size:12.5px;font-weight:600;z-index:60;animation:up .25s}
+.chk{display:flex;gap:8px;font-size:12.5px;padding:3px 0}
+.b-banner{background:linear-gradient(135deg,#16a34a,#4ade80);color:#fff;text-align:center;padding:14px;font-size:30px;font-weight:900;font-style:italic}
+.bcat{text-align:center;font-size:10.5px;font-weight:600}
+.bcat .ci{width:60px;height:60px;margin:0 auto 4px;border-radius:50%;background:#fbf3e4;display:flex;align-items:center;justify-content:center;font-size:30px;position:relative}
+.b4{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0}
+.b4 div{height:64px;border-radius:12px;display:flex;align-items:flex-end;padding:5px;font-size:10px;font-weight:800}
+/* panel */
+.panel{width:450px;max-width:100%;background:#fff;border-radius:24px;padding:22px;box-shadow:0 10px 30px -15px rgba(0,0,0,.2);height:min(820px,calc(100vh - 48px));min-height:640px;overflow-y:auto}
+.panel h1{font-size:21px;letter-spacing:-.4px;margin-bottom:2px}
+.panel .by{font-size:12.5px;color:var(--mut);margin-bottom:10px}
+.seg{display:flex;background:#eef1ef;border-radius:12px;padding:3px;margin:4px 0 8px}
+.seg button{flex:1;padding:7px 4px;border-radius:9px;font-size:12px;font-weight:700;color:var(--mut)}
+.seg button.on{background:#fff;color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.lbl{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--mut);font-weight:800;margin:14px 0 4px}
+.fix{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;padding:8px 10px;border-radius:12px;border:1px solid transparent}
+.fix:hover{background:var(--gl);border-color:#bfe8cf}
+.fix .n{flex:none;min-width:24px;height:22px;padding:0 5px;border-radius:99px;background:var(--red);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.fix .n.r2{background:var(--blue)}
+.fix b{font-size:13px;display:block}.fix span{font-size:11.5px;color:var(--mut);line-height:1.35;display:block}
+.fix .go{margin-left:auto;font-size:11px;font-weight:800;color:var(--g2);flex:none;margin-top:2px}
+.tog{display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:600;padding:5px 0;cursor:pointer}
+.note{font-size:11px;color:var(--mut);margin-top:14px;line-height:1.5}
+.pin{display:none;position:absolute;top:8px;right:10px;min-width:22px;height:22px;padding:0 5px;border-radius:99px;background:var(--red);color:#fff;font-style:normal;font-size:10.5px;font-weight:800;align-items:center;justify-content:center;border:2px solid #fff;z-index:3;box-shadow:0 2px 6px rgba(0,0,0,.3)}
+.pin.r2{background:var(--blue)}
+.showpins .pin{display:flex}
+.flash{animation:fl 1.6s}
+@keyframes fl{0%,60%{box-shadow:0 0 0 4px var(--blue) inset}100%{box-shadow:0 0 0 0 transparent inset}}
+@media(max-width:900px){.panel{height:auto}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="phone" id="phone"><div class="status"><span id="clk">1:00 PM</span><span>5G ▮▮▮</span></div><div class="screen" id="screen"></div><div id="layer"></div></div>
+  <div class="panel" id="panel"></div>
+</div>
+
+<script>
+/* =============================== DATA =============================== */
+// t: veg|nv|egg · v: vrat-friendly (no onion/garlic, sendha namak) · fi: fibre
+const D=[
+ {id:'d1',n:'Mushroom Cheese Omelette',e:'🍳',bg:'#fdf1d0',pr:99,p:13,c:210,cb:6,f:14,fi:1,t:'egg',cats:['Breakfast','Protein Rich'],tags:['light'],d:'Fluffy omelette filled with mushroom and cheese, 2 eggs.'},
+ {id:'d2',n:'SuperYou Chocolate Protein Shake',e:'🥤',bg:'#f3e3d6',pr:139,p:30,c:180,cb:14,f:4,fi:2,t:'veg',v:1,cats:['Protein Rich','Cold Beverages','Guilt Free'],tags:['light','sweet'],d:'30g protein milkshake made using SuperYou chocolate protein bar. 300 ml.'},
+ {id:'d3',n:'Paneer Protein Bowl',e:'🥗',bg:'#e1f5e8',pr:189,p:28,c:420,cb:34,f:18,fi:6,t:'veg',cats:['Protein Rich','Biryani & Rice Bowls','Healthy'],tags:['full'],d:'Grilled paneer, brown rice, sprouts, hung-curd mint drizzle.'},
+ {id:'d4',n:'Grilled Chicken Wrap',e:'🌯',bg:'#fbe9d6',pr:179,p:31,c:460,cb:38,f:16,fi:5,t:'nv',cats:['Protein Rich','Sandwiches & Wraps'],tags:['full'],d:'Herb grilled chicken, crunchy slaw, whole-wheat wrap.'},
+ {id:'d5',n:'Peanut Butter Toast Sandwich',e:'🥪',bg:'#fdf1d0',pr:119,p:14,c:320,cb:36,f:14,fi:5,t:'veg',cats:['Breakfast','Sandwiches & Wraps','Protein Rich','Guilt Free'],tags:['sweet','light'],d:'Multigrain toast, peanut butter, banana slices, chia.'},
+ {id:'d6',n:'Chicken Tikka Rice Bowl',e:'🍗',bg:'#fbe3e0',pr:219,p:35,c:480,cb:44,f:15,fi:4,t:'nv',cats:['Protein Rich','Biryani & Rice Bowls'],tags:['full','spicy'],d:'Smoky tikka chicken over jeera rice with pickled onions.'},
+ {id:'d7',n:'Egg Bhurji Pav',e:'🥚',bg:'#fbe9d6',pr:109,p:17,c:390,cb:32,f:18,fi:3,t:'egg',cats:['Breakfast','Protein Rich'],tags:['full','spicy'],d:'Masala scrambled eggs with butter-toasted pav.'},
+ {id:'d8',n:'Soya Chaap Roll',e:'🌯',bg:'#fdf1d0',pr:139,p:22,c:410,cb:36,f:14,fi:4,t:'veg',cats:['Protein Rich','Sandwiches & Wraps'],tags:['full','spicy'],d:'Tandoori soya chaap, onions, mint chutney, rumali roti.'},
+ {id:'d9',n:'Greek Yogurt Berry Parfait',e:'🍨',bg:'#efe9fb',pr:129,p:15,c:240,cb:26,f:6,fi:3,t:'veg',v:1,cats:['Breakfast','Desserts','Protein Rich','Guilt Free'],tags:['light','sweet','yogurt'],d:'Thick Greek yogurt, berry compote, toasted oats.'},
+ {id:'d10',n:'Loaded Cheese Pizza Slice',e:'🍕',bg:'#fbe3e0',pr:149,p:12,c:540,cb:56,f:26,fi:3,t:'veg',cats:['Snacks'],tags:['full','indulgent','junk'],d:'Double cheese, oregano, chilli flakes. Big slice.'},
+ {id:'d11',n:'Masala Maggi',e:'🍜',bg:'#fdf1d0',pr:79,p:9,c:360,cb:52,f:12,fi:2,t:'veg',cats:['Maggi & Pasta','Late-night'],tags:['spicy','indulgent','full','comfort','junk'],mu:'Maggi & Noodles',d:'The classic, with veggies and butter.'},
+ {id:'d12',n:'Peri Peri Chicken Burger',e:'🍔',bg:'#fbe9d6',pr:169,p:24,c:580,cb:48,f:28,fi:3,t:'nv',cats:['Burgers','Late-night'],tags:['spicy','full','indulgent','junk'],mu:'Bites',d:'Crispy chicken, peri peri mayo, lettuce, brioche.'},
+ {id:'d13',n:'Fudgy Brownie',e:'🍫',bg:'#eadccf',pr:89,p:4,c:330,cb:42,f:16,fi:2,t:'veg',cats:['Desserts','Late-night'],tags:['sweet','indulgent'],mu:'Sweet',d:'Warm, gooey, with a dusting of cocoa.'},
+ {id:'d14',n:'Aloo Tikki Chaat',e:'🥔',bg:'#fdf1d0',pr:89,p:6,c:260,cb:34,f:11,fi:4,t:'veg',cats:['Chaats','Snacks'],tags:['spicy','light'],d:'Crisp tikki, curd, tamarind, mint chutney.'},
+ {id:'d15',n:'Classic Cold Coffee',e:'☕',bg:'#eadccf',pr:189,p:5,c:210,cb:30,f:8,fi:0,t:'veg',v:1,cats:['Cold Beverages','Coffees'],tags:['sweet'],d:'Smooth, cold, strong.'},
+ /* Navratri / vrat-friendly */
+ {id:'d16',n:'Makhana Peanut Power Bowl',e:'🥜',bg:'#fdf1d0',pr:129,p:16,c:290,cb:24,f:15,fi:6,t:'veg',v:1,cats:['Protein Rich','Healthy','Guilt Free'],tags:['light'],d:'Roasted makhana, peanuts, sendha namak, a squeeze of lemon.'},
+ {id:'d17',n:'Kuttu Paneer Chilla Wrap',e:'🫓',bg:'#e1f5e8',pr:159,p:23,c:380,cb:36,f:15,fi:7,t:'veg',v:1,cats:['Protein Rich','Healthy','Sandwiches & Wraps'],tags:['full'],d:'Buckwheat chilla stuffed with paneer and green chutney. Vrat-friendly.'},
+ {id:'d18',n:'Sabudana Khichdi + Curd',e:'🍚',bg:'#fff3d6',pr:119,p:12,c:360,cb:48,f:12,fi:3,t:'veg',v:1,cats:['Breakfast','Healthy'],tags:['full','comfort'],d:'Peanut-rich sabudana khichdi with a cooling curd bowl.'},
+ {id:'d19',n:'Vrat Paneer Tikka Bowl',e:'🧀',bg:'#e1f5e8',pr:209,p:30,c:430,cb:30,f:20,fi:6,t:'veg',v:1,cats:['Protein Rich','Healthy','Biryani & Rice Bowls'],tags:['full'],d:'Paneer tikka (no onion, no garlic), samak rice, sendha namak.'},
+ {id:'d20',n:'Fruit & Curd Power Bowl',e:'🍓',bg:'#f6e4ec',pr:109,p:16,c:260,cb:30,f:8,fi:4,t:'veg',v:1,cats:['Breakfast','Healthy','Guilt Free','Protein Rich'],tags:['light','sweet','yogurt'],d:'Thick curd, seasonal fruit, soaked almonds, honey.'},
+ {id:'d21',n:'Singhara Aloo Chaat',e:'🥔',bg:'#fff3d6',pr:99,p:7,c:250,cb:36,f:9,fi:4,t:'veg',v:1,cats:['Chaats'],tags:['light','spicy'],d:'Water-chestnut-flour tikki, curd, sendha namak.'},
+ /* Balanced plates (lunch) */
+ {id:'d22',n:'Quinoa Chickpea Salad',e:'🥗',bg:'#e1f5e8',pr:189,p:18,c:340,cb:38,f:12,fi:11,t:'veg',v:1,cats:['Balanced Plates','Healthy','Mexican & Salads'],tags:['bal','light'],d:'Quinoa, chickpeas, cucumber, mint, lemon-olive dressing.'},
+ {id:'d23',n:'Dal Tadka Millet Thali',e:'🍛',bg:'#fdf1d0',pr:199,p:20,c:460,cb:58,f:12,fi:12,t:'veg',cats:['Balanced Plates','Healthy','Biryani & Rice Bowls'],tags:['bal','full'],d:'Dal tadka, millet rice, seasonal sabzi, curd, salad.'},
+ {id:'d24',n:'Greens & Grilled Tofu Salad',e:'🥬',bg:'#e1f5e8',pr:179,p:24,c:320,cb:22,f:14,fi:10,t:'veg',v:1,cats:['Balanced Plates','Healthy','Mexican & Salads','Protein Rich'],tags:['bal','light'],d:'Leafy greens, grilled tofu, seeds, sesame-ginger dressing.'},
+ {id:'d25',n:'Chicken Caesar Balance Plate',e:'🥗',bg:'#fbe9d6',pr:229,p:32,c:410,cb:30,f:16,fi:8,t:'nv',cats:['Balanced Plates','Healthy','Mexican & Salads','Protein Rich'],tags:['bal'],d:'Grilled chicken, romaine, whole-grain croutons, light caesar.'},
+ /* Crave smart (7-10 PM) */
+ {id:'d26',n:'Baked Peri Peri Fries',e:'🍟',bg:'#fdf1d0',pr:119,p:5,c:230,cb:34,f:8,fi:4,t:'veg',cats:['Snacks','Guilt Free','Late-night'],tags:['smart','spicy'],sv:'−45% cal vs fried',mu:'Bites',d:'Baked, not fried. Same peri peri hit.'},
+ {id:'d27',n:'Air-fried Paneer Nuggets',e:'🧆',bg:'#fbe9d6',pr:149,p:20,c:280,cb:16,f:14,fi:2,t:'veg',cats:['Snacks','Guilt Free','Late-night'],tags:['smart'],sv:'High protein',mu:'Bites',d:'Crunchy outside, soft paneer inside. Air-fried.'},
+ {id:'d28',n:'Protein Mac & Cheese',e:'🧀',bg:'#fff3d6',pr:179,p:22,c:390,cb:40,f:14,fi:5,t:'veg',cats:['Maggi & Pasta','Guilt Free'],tags:['smart','comfort'],sv:'22g protein',d:'Chickpea pasta, light cheese sauce. Comfort without the crash.'},
+ {id:'d29',n:'Baked Choco Protein Brownie',e:'🍫',bg:'#eadccf',pr:109,p:12,c:210,cb:22,f:9,fi:3,t:'veg',cats:['Desserts','Guilt Free','Late-night'],tags:['smart','sweet'],sv:'−35% sugar',mu:'Sweet',d:'Fudgy, baked with oat flour and whey.'},
+ {id:'d30',n:'Açaí Berry Smoothie Bowl',e:'🫐',bg:'#efe9fb',pr:199,p:10,c:290,cb:44,f:8,fi:8,t:'veg',v:1,cats:['Breakfast','Guilt Free','Healthy'],tags:['light','sweet','guilt'],d:'Açaí, berries, banana, granola, coconut flakes.'},
+ {id:'d31',n:'Mango Chia Smoothie Bowl',e:'🥭',bg:'#fff3d6',pr:179,p:9,c:260,cb:42,f:7,fi:7,t:'veg',v:1,cats:['Breakfast','Guilt Free','Healthy'],tags:['light','sweet','guilt'],d:'Alphonso mango, chia, seeds, coconut.'},
+ /* Yogurt bowls (Guilt Free) */
+ {id:'y1',n:'Mango Greek Yogurt Bowl',e:'🥭',bg:'#fff3d6',pr:149,p:17,c:270,cb:34,f:6,fi:3,t:'veg',v:1,cats:['Guilt Free','Breakfast','Healthy'],tags:['yogurt','sweet','light'],d:'Thick Greek yogurt, Alphonso mango, pumpkin seeds, honey drizzle.'},
+ {id:'y2',n:'Honey Almond Granola Yogurt Bowl',e:'🥣',bg:'#fdf1d0',pr:159,p:15,c:330,cb:40,f:11,fi:4,t:'veg',v:1,cats:['Guilt Free','Breakfast','Healthy'],tags:['yogurt','sweet'],d:'Creamy yogurt, crunchy oat granola, toasted almonds, wild honey.'},
+ {id:'y3',n:'Choco Peanut Butter Protein Yogurt Bowl',e:'🍫',bg:'#eadccf',pr:179,p:24,c:340,cb:26,f:14,fi:4,t:'veg',cats:['Guilt Free','Protein Rich','Healthy'],tags:['yogurt','sweet','light'],sv:'24g protein',d:'High-protein yogurt, peanut butter, cacao nibs, banana.'},
+ {id:'y4',n:'Blueberry Chia Yogurt Bowl',e:'🫐',bg:'#efe9fb',pr:169,p:14,c:250,cb:30,f:8,fi:7,t:'veg',v:1,cats:['Guilt Free','Breakfast','Healthy'],tags:['yogurt','sweet','light'],d:'Blueberry compote, chia pudding layer, vanilla yogurt.'},
+ {id:'y5',n:'Cucumber Mint Raita Bowl',e:'🥒',bg:'#e1f5e8',pr:99,p:9,c:140,cb:12,f:5,fi:2,t:'veg',v:1,cats:['Guilt Free','Healthy'],tags:['yogurt','light','comfort'],sv:'Only 140 cal',d:'Cooling curd, cucumber, roasted jeera, mint. Savoury and light.'},
+ {id:'y6',n:'Dry Fruit & Honey Vrat Yogurt Bowl',e:'🌰',bg:'#fff3d6',pr:149,p:15,c:300,cb:30,f:12,fi:4,t:'veg',v:1,cats:['Guilt Free','Healthy','Protein Rich'],tags:['yogurt','sweet','light'],d:'Curd with makhana, dates, almonds and walnuts. Vrat-friendly.'},
+ {id:'y7',n:'Strawberry Cheesecake Yogurt Bowl',e:'🍓',bg:'#f6e4ec',pr:159,p:16,c:290,cb:32,f:9,fi:3,t:'veg',cats:['Guilt Free','Desserts','Healthy'],tags:['yogurt','sweet'],sv:'Dessert, 290 cal',d:'Strawberry, cream-cheese swirl, graham crumble, Greek yogurt.'},
+ /* Comfort */
+ {id:'d32',n:'Tomato Basil Soup',e:'🍅',bg:'#fbe3e0',pr:99,p:4,c:120,cb:18,f:4,fi:3,t:'veg',cats:['Soups'],tags:['comfort','light'],d:'Slow-simmered tomato, basil, a swirl of cream.'},
+ {id:'d33',n:'Sweet Corn Veg Soup',e:'🌽',bg:'#fdf1d0',pr:99,p:5,c:140,cb:22,f:3,fi:3,t:'veg',cats:['Soups'],tags:['comfort','light'],d:'Thick, silky, pepper-kissed.'},
+ {id:'d34',n:'Cheese Maggi',e:'🍜',bg:'#fff3d6',pr:99,p:11,c:410,cb:50,f:16,fi:2,t:'veg',cats:['Maggi & Pasta','Late-night'],tags:['comfort','indulgent','junk','full'],mu:'Maggi & Noodles',d:'Maggi with a blanket of melted cheese.'},
+ {id:'d35',n:'Peri Peri Maggi',e:'🍜',bg:'#fbe3e0',pr:109,p:9,c:380,cb:52,f:13,fi:2,t:'veg',cats:['Maggi & Pasta','Late-night'],tags:['comfort','spicy','junk','full'],mu:'Maggi & Noodles',d:'Maggi with fiery peri peri masala.'},
+ {id:'d36',n:'Veg Alfredo Penne',e:'🍝',bg:'#fff3d6',pr:209,p:14,c:520,cb:58,f:22,fi:4,t:'veg',cats:['Maggi & Pasta'],tags:['comfort','full','junk'],d:'Creamy penne with herbs and veggies.'},
+ {id:'d37',n:'Chicken Pink Sauce Pasta',e:'🍝',bg:'#fbe3e0',pr:249,p:26,c:560,cb:56,f:22,fi:4,t:'nv',cats:['Maggi & Pasta'],tags:['comfort','full','junk'],d:'Chicken in creamy pink sauce.'},
+ {id:'d38',n:'Veg Grilled Cheese Sandwich',e:'🥪',bg:'#fdf1d0',pr:129,p:12,c:380,cb:38,f:16,fi:4,t:'veg',cats:['Sandwiches & Wraps','Late-night'],tags:['comfort','junk'],mu:'Sandwiches',d:'Toasted sourdough, cheese, veggies.'},
+ {id:'d39',n:'Cheese Jalapeño Poppers',e:'🧀',bg:'#fbe9d6',pr:149,p:8,c:330,cb:24,f:20,fi:2,t:'veg',cats:['Snacks','Late-night'],tags:['junk','spicy'],mu:'Bites',d:'Crisp shell, molten cheese centre.'}
+];
+const byId=id=>D.find(x=>x.id===id);
+const CATS=[['Protein Rich','💪'],['Breakfast','🍳'],['Biryani & Rice Bowls','🍛'],['Mexican & Salads','🥗'],['Soups','🍲'],['Coffees','☕'],['Snacks','🍟'],['Chaats','🥔'],['Desserts','🍰'],['Burgers','🍔'],['Sandwiches & Wraps','🌯'],['Maggi & Pasta','🍝']];
+const MOODS=[['comfort','🍜 Comfort food'],['protein','💪 Protein rich'],['full','🍛 Full meal'],['junk','🍟 Junk fix'],['sweet','🍫 Something sweet'],['spicy','🌶️ Something spicy']];
+const MENU_COUNTS={'Healthy':24,'Guilt Free':19,'Protein Rich':23,'Balanced Plates':14,'Breakfast':45,'Soups':9,'Maggi & Pasta':14,'Sandwiches & Wraps':20,'Chaats':13,'Biryani & Rice Bowls':16,'Coffees':10,'Desserts':9,'Late-night':24,'Snacks':18};
+const MENU_ORDER={Breakfast:['Guilt Free','Healthy','Breakfast','Protein Rich','Coffees','Sandwiches & Wraps','Desserts'],Lunch:['Balanced Plates','Healthy','Protein Rich','Biryani & Rice Bowls','Guilt Free','Soups','Sandwiches & Wraps'],Dinner:['Guilt Free','Healthy','Maggi & Pasta','Protein Rich','Snacks','Soups','Desserts'],'Late night':['Late-night','Maggi & Pasta','Snacks','Desserts','Guilt Free','Healthy','Coffees']};
+const HIST_AVG=184; // average spend of the demo "returning user"
+
+/* "Show" list for the side panel */
+const R1=[
+ [1,'Protein Picks pinned to the top','Was Row 2, position 4. Why: it\'s what this persona came for.','home'],
+ [2,'Protein tile with real contrast','Why: a muted tile on cream is missed when scrolling fast.','home'],
+ [3,'Macros on the dish card','Why: removes a tap per dish and builds trust.','home'],
+ [4,'5-minute decision on late orders','Why: silent cancels after an hour are the top 1-star driver.','late'],
+ [5,'Payment fails → auto refund in 30s','Why: recovery must be as fast as the food.','payfail'],
+ [6,'OTP delivery + map pin check','Why: ends "Delivered" with nothing at the door.','otp'],
+ [7,'Freebies are real items (2× credit)','Why: a broken promise costs more than the item.','free'],
+ [8,'Support at the speed of the food','Why: support is the multiplier on every other bug.','support'],
+ [9,'"View dish details" everywhere','Why: half-shipped features feel careless.','details'],
+ [10,'Your usuals row','Why: repeat users decide in seconds. Now at the very top.','home'],
+ [11,'Trending within 1 km','Why: kills decision paralysis, adds urgency.','home'],
+ [12,'Meal Clock','Why: 10-min delivery is impulse + context driven.','home'],
+ [13,'Craving mood pills','Why: people know the mood before the dish.','home']
+];
+const R2=[
+ ['N1','Navratri / festival clock','Why: showing non-veg during Navratri tells users the app doesn\'t know what day it is.',1],
+ ['N2','Speed of ordering: 1-tap for returning users','Why: a 7-minute promise dies in a 9-tap checkout. Saved pin + UPI = one tap.',2],
+ ['N2b','Speed of ordering: fast first choice for new users','Why: no history to lean on, so Top 3 + "Pick for me" + GPS pin cut the decision time.',16],
+ ['N3','7–10 PM "Crave smart" row','Why: after-work junk cravings are real. Capture them without the diet guilt.',3],
+ ['N4','Lunch: balanced plates + macro bar','Why: Bangalore lunch = balance (fibre, protein, carbs, fats).',4],
+ ['N5','OTP on the home screen','Why: zero hunting for the code, and why it\'s not a hassle.',5],
+ ['N6','"Order again" moved to the very top','Why: repeat users decide first, scroll second.',6],
+ ['N7','Mood pills that aren\'t all protein','Why: "Comfort" should show Maggi, soup, pasta.',7],
+ ['N8','Colour grading overhaul','Why: one green + one warm accent so the eye knows where to land.',8],
+ ['N9','Relatable Meal Clock copy','Why: tone makes people stay and scroll.',9],
+ ['N10','Late-night munchies, tidied','Why: nobody wants to scroll two long rows at midnight.',10],
+ ['N11','Craving-first (11 PM pizza person) mode','Why: the same app, tuned for indulgence when that\'s the mood.',11],
+ ['N12','Budget-zone row from order history','Why: shows what fits what you usually spend.',12],
+ ['N13','Menu button: moved + smarter','Why: it was covering content mid-screen.',13],
+ ['N14','Guilt-free first in the Menu when it matters','Why: a morning smoothie-bowl shopper shouldn\'t scroll to the last item.',14],
+ ['N15','Healthy ⟷ Guilt-free, side by side','Why: both choices at equal weight, one glance.',15]
+];
+
+/* =============================== STATE =============================== */
+const S={screen:'home',stack:[],hour:13,user:'healthy',hist:'returning',festival:true,diet:'veg',mood:null,munch:'All',
+  gs:'All',cart:{},ver:'after',pins:false,payFail:false,cat:null,vf:[],order:null,stage:0,timer:null,wallet:0,addrOk:true,toast:null,sheetHTML:'',otpPref:'door'};
+const $=s=>document.querySelector(s);
+const slot=h=>h>=7&&h<11?'Breakfast':h>=11&&h<16?'Lunch':h>=16&&h<23?'Dinner':'Late night';
+const h12=h=>{const x=((h%24)+24)%24;return (x%12||12)+':00 '+(x<12?'AM':'PM')};
+const vd=t=>`<div class="vd ${t==='nv'?'nv':t==='egg'?'eg':''}"><i></i></div>`;
+const qty=id=>S.cart[id]||0;
+const count=()=>Object.values(S.cart).reduce((a,b)=>a+b,0);
+const sub=()=>Object.entries(S.cart).reduce((a,[id,q])=>a+byId(id).pr*q,0);
+const disc=()=>sub()>=149?Math.min(Math.round(sub()*.5),100):0;
+const freeOn=()=>sub()>=199;
+// festival diet: 'strict' = vrat (no onion/garlic) · 'veg' = default, onion/garlic ok · 'all' = non-veg opted in (shown with a mark)
+const vis=d=>!S.festival||S.diet==='all'||(d.t==='veg'&&(S.diet!=='strict'||d.v));
+const setDiet=k=>{S.diet=k;render(1)};
+const L=a=>a.filter(vis);
+const pin=(n,r2)=>`<i class="pin ${r2||typeof n==='string'?'r2':''}">${n}</i>`;
+
+/* =============================== COMPONENTS =============================== */
+function addBtn(d){const q=qty(d.id);
+  return q?`<div class="stp" onclick="event.stopPropagation()"><button onclick="chg('${d.id}',-1)">−</button><span>${q}</span><button onclick="chg('${d.id}',1)">+</button></div>`
+          :`<button class="add" onclick="event.stopPropagation();chg('${d.id}',1)">ADD</button>`}
+const macroLine=d=>d.p>=20?`<b class="hi">${d.p}g</b> protein · ${d.c} cal`:`${d.c} cal · ${d.p}g protein`;
+function balBar(d){const t=d.p+d.cb+d.fi+d.f;const w=x=>(x/t*100).toFixed(0)+'%';
+  return `<div class="bar"><i style="width:${w(d.p)};background:#16a34a"></i><i style="width:${w(d.cb)};background:#f2a516"></i><i style="width:${w(d.fi)};background:#0d9488"></i><i style="width:${w(d.f)};background:#a8a29e"></i></div>
+  <div class="bl"><em style="--c:#16a34a">P ${d.p}</em><em style="--c:#f2a516">C ${d.cb}</em><em style="--c:#0d9488">Fibre ${d.fi}</em><em style="--c:#a8a29e">F ${d.f}</em></div>`}
+function card(d,o={}){
+  const badge=S.festival&&d.t==='nv'?`<span class="tag" style="background:#fee2e2;color:#991b1b">Non-veg</span>`:S.festival&&d.v?`<span class="tag">🪔 Vrat ✓</span>`:d.sv?`<span class="tag g">${d.sv}</span>`:'';
+  return `<div class="card ${o.dark?'dark':''}" onclick="detail('${d.id}')">
+    <div class="img" style="background:${o.dark?'#145a38':d.bg}">${d.e}${vd(d.t)}${badge}</div>
+    <div class="nm">${d.n}</div>
+    ${o.bal?balBar(d):`<div class="macro">${macroLine(d)}</div>`}
+    <span class="vlink">View dish details ›</span>
+    <div class="row"><span class="pr">₹${d.pr}</span>${addBtn(d)}</div></div>`;
+}
+function mini(d,note){
+  return `<div class="mini" onclick="detail('${d.id}')"><div class="img" style="background:${d.bg}">${d.e}${vd(d.t)}</div><div class="nm">${d.n}</div><div class="sm">${note||d.c+' cal'}</div><div class="row"><span class="pr" style="font-size:12.5px">₹${d.pr}</span>${addBtn(d)}</div></div>`;
+}
+function row(d){
+  return `<div class="lrow"><div class="img" style="background:${d.bg}" onclick="detail('${d.id}')">${d.e}${vd(d.t)}</div>
+    <div class="info"><div class="nm">${d.n}</div>
+    <div class="mq">${d.p>=20?`<span class="pg">${d.p}g protein</span>`:`<span>${d.p}g protein</span>`}<span>${d.c} cal</span>${d.sv?`<span style="background:var(--gl);color:var(--g2)">${d.sv}</span>`:''}</div>
+    <div class="d">${d.d}</div>
+    <div class="row"><span class="pr">₹${d.pr}</span><a class="vlink" style="margin:0" onclick="detail('${d.id}')">View dish details ›</a>${addBtn(d)}</div></div></div>`;
+}
+function sec(id,pn,title,sub,inner,more){
+  return `<section id="${id}">${pn||''}<div class="sh"><div><h2>${title}</h2><div class="sub">${sub}</div></div>${more?`<small onclick="${more}">See all ›</small>`:''}</div>${inner}</section>`;
+}
+const hs=a=>`<div class="hs">${a}</div>`;
+const sortBy=(a,k,dir=-1)=>[...a].sort((x,y)=>dir*(x[k]-y[k]));
+
+/* ---- Meal clock copy (point 9) ---- */
+function clockCopy(){
+  const s=slot(S.hour),H=S.user==='healthy';
+  const A={healthy:{Breakfast:['🌅','Smoothie-bowl kinda morning? 🫐','Guilt-free picks up top'],Lunch:['⚡','Protein ke paglu? We\'ve got you covered 😎','Balanced desk lunches, macros upfront'],Dinner:['🌙','Post-work cravings, but the diet says hi 👀','Junk, just smarter. Same craving, lighter score'],'Late night':['😴','Hungry at 1 AM? Zero judgement 🌙','Light bites that won\'t wreck tomorrow']},
+   craving:{Breakfast:['🌅','Running late again? Quick bites, zero lectures ☕','Fast, easy, hot'],Lunch:['🍽️','Big hunger, bigger plates 🍛','Filling things you actually like'],Dinner:['🌆','Long day. You\'ve earned the cheesy stuff 🧀','Comfort first, calories later'],'Late night':['🌙','11 PM pizza person? Respect. 🍕','Tonight\'s menu: no questions asked']}};
+  return A[H?'healthy':'craving'][s];
+}
+
+/* =============================== SCREENS =============================== */
+function hdr(){return `<div class="hdr"><div class="top"><div><h1>7 Minutes</h1><div class="loc">8/A, 20th Main, Koramangala ⌄</div></div><div><span class="earn">EARN ₹250</span> <span style="font-size:20px;vertical-align:middle">👤</span></div></div>
+ <div class="search"><span>🔍 Search "Paneer Bowl"</span><span class="vegt ${S.festival&&S.diet!=='all'?'on':''}" onclick="S.festival=true;S.diet=S.diet==='all'?'veg':'all';render(1)">VEG</span></div></div>`}
+
+function homeBefore(){
+  const order=['Biryani & Rice Bowls','Mexican & Salads','Soups','Hot Beverages','Snacks','Chaats','Desserts','Burgers','Paratha Meals','Sandwiches & Rolls','Pasta & Maggi','Cold Beverages','Protein Rich','Breakfast','Combos'];
+  const ic={'Biryani & Rice Bowls':'🍛','Mexican & Salads':'🥗','Soups':'🍲','Hot Beverages':'☕','Snacks':'🍟','Chaats':'🥔','Desserts':'🍰','Burgers':'🍔','Paratha Meals':'🫓','Sandwiches & Rolls':'🌯','Pasta & Maggi':'🍝','Cold Beverages':'🥤','Protein Rich':'💪','Breakfast':'🍳','Combos':'🍱'};
+  return hdr()+`<div class="b-banner">50% OFF<br><span style="font-size:13px;font-style:normal">UNLOCKED · Use code SAVE100</span></div>
+  <section><div class="grid">${order.map(c=>`<div class="bcat" onclick="openCat('${c==='Protein Rich'?'Protein Rich':c}')"><div class="ci" style="${c==='Protein Rich'?'background:#f6efd9':''}">${ic[c]}</div>${c}</div>`).join('')}</div>
+  <div class="b4"><div style="background:#14532d;color:#fff">gourmet</div><div style="background:#ddd0f5">Fresh Arrivals</div><div style="background:#d9f5d0">Bestsellers</div><div style="background:#fde68a">Under ₹99</div></div>
+  <div class="sub" style="text-align:center;padding:10px 0 90px;color:#8a5a00;font-weight:700">Today: 4 unrelated pastels · giant banner pushes content down · Protein Rich buried · no usuals · floating Menu covers content</div></section>`;
+}
+
+function homeAfter(){
+  const s=slot(S.hour),H=S.user==='healthy',ret=S.hist==='returning';
+  const cc=clockCopy(),late=s==='Late night',crave=S.hour>=19&&S.hour<=22,lunch=s==='Lunch',bfast=s==='Breakfast';
+  // ---------- rows ----------
+  const protPool=L(D.filter(d=>d.p>=22||(S.festival&&d.v&&d.p>=16))).sort((a,b)=>b.p-a.p).slice(0,5);
+  const R={};
+  R.prot=sec('s-prot',pin(1),S.festival?'🪔 Navratri protein picks':'💪 Protein Picks',
+    S.festival?(S.diet==='strict'?'Strict vrat: no onion, no garlic, protein-packed':S.diet==='all'?'Veg first. Non-veg is on and marked in red':'Veg and protein-packed, vrat-friendly ones marked 🪔'):`Pinned for ${s.toLowerCase()} · 22g+ protein`,hs(protPool.map(d=>card(d,{dark:1})).join('')),"openCat('Protein Rich')");
+  R.bal=lunch?sec('s-bal',pin('N4'),'⚖️ Balanced plates for lunch','Protein + carbs + fibre + fats in one plate. Bar shows the mix',hs(L(D.filter(d=>d.tags.includes('bal'))).map(d=>card(d,{bal:1})).join('')),"openCat('Balanced Plates')"):'';
+  R.smart=crave?sec('s-smart',pin('N3'),'😋 Crave smart · 7–10 PM','Same junk craving, lighter on the scoreboard',hs(L(D.filter(d=>d.tags.includes('smart'))).map(d=>card(d)).join('')),"openCat('Guilt Free')"):'';
+  R.guilt=bfast?sec('s-guilt',pin('N14'),'🫐 Smoothie bowls & guilt-free','Morning-friendly, up front, not buried in the Menu',hs(L(D.filter(d=>d.tags.includes('guilt')||d.cats.includes('Guilt Free'))).slice(0,6).map(d=>card(d)).join('')),"openCat('Guilt Free')"):'';
+  const mu=['All','Maggi & Noodles','Sandwiches','Bites','Sweet'];
+  const mp=L(D.filter(d=>d.cats.includes('Late-night')&&(S.munch==='All'||d.mu===S.munch))).slice(0,4);
+  R.munch=late?sec('s-munch',pin('N10'),'🌙 Late-night munchies',`Open till 4 AM · one tidy grid, not a long scroll`,
+    `<div class="chips">${mu.map(m=>`<button class="chip ${S.munch===m?'on':''}" onclick="S.munch='${m}';render(1)">${m}</button>`).join('')}</div><div class="g2">${mp.map(d=>card(d)).join('')}</div>`,"openCat('Late-night')"):'';
+  R.trend=sec('s-trend',pin(11),'Trending near you',`<span class="lv">LIVE</span> within 1 km · what Koramangala is ordering`,
+    `<div class="trend">${L([byId('d6'),byId('d2'),byId('d8'),byId('d11'),byId('d13'),byId('d19'),byId('d17'),byId('d34')]).slice(0,5).map((d,i)=>`<div class="tr" onclick="detail('${d.id}')"><span class="e">${d.e}</span><span><b>${d.n.split(' ').slice(0,3).join(' ')}</b>${[212,187,143,131,96][i]} in the last hour</span></div>`).join('')}</div>`);
+  const lo=Math.round(HIST_AVG*.8),hi=Math.round(HIST_AVG*1.2);
+  const bud=L(D.filter(d=>d.pr>=lo&&d.pr<=hi&&(H?d.p>=12&&!d.tags.includes('junk'):true))).slice(0,5);
+  R.budget=ret&&bud.length?sec('s-budget',pin('N12'),'💸 In your ₹'+lo+'–'+hi+' zone',`You usually spend ~₹${HIST_AVG} per order. Picks that fit, no bill shock`,hs(bud.map(d=>card(d)).join(''))):'';
+  const usual=(H?['d3','d2','d1','d19']:['d10','d11','d12','d34']).map(byId);
+  const uSub=['Ordered 6×','Ordered 4×','Ordered 3×','Ordered 3×'];
+  R.usual=ret?`<section id="s-usual" style="padding-top:12px">${pin('N6')}<div class="sh" style="margin-bottom:8px"><div><h2>Order again</h2><div class="sub">Your usuals, one tap. First thing you see</div></div></div>${hs(L(usual).map((d,i)=>mini(d,uSub[i])).join(''))}</section>`:'';
+  // new user: no history to lean on, so make the first choice fast
+  const starter=L([byId('d6'),byId('d19'),byId('d3'),byId('d2'),byId('d17'),byId('d11')]).slice(0,3);
+  R.start=!ret?`<section id="s-start" style="padding-top:12px">${pin('N2b')}<div class="sh" style="margin-bottom:8px"><div><h2>New here? Start with these</h2><div class="sub">Top 3 in Koramangala right now. Two taps from ordered</div></div></div>${hs(starter.map((d,i)=>mini(d,['212 ordered/hr','187 ordered/hr','143 ordered/hr'][i])).join(''))}<button class="btn" style="padding:11px;font-size:14px;margin:0 0 4px" onclick="decide()">🎲 Can't decide? Pick for me</button></section>`:'';
+  // ---------- navratri / clock ----------
+  const fest=S.festival?`<div class="fest" id="s-fest">${pin('N1')}<b>🪔 Navratri mode is on</b><div class="sub">Veg by default, everywhere. Pick how strict you are. Protein and macros stay on.</div>
+    <div class="seg" style="margin:8px 0 2px;background:#fbe7b5">${[['strict','Strict vrat'],['veg','Veg'],['all','+ Non-veg']].map(([k,l])=>`<button class="${S.diet===k?'on':''}" onclick="setDiet('${k}')">${l}</button>`).join('')}</div>
+    <div class="sub">${S.diet==='strict'?'No onion, no garlic, sendha namak only':S.diet==='all'?'Non-veg shown with a red mark. Your choice, no judgement':'Onion and garlic are fine. Non-veg stays hidden until you opt in'}</div>
+    <div class="r"><span>Not fasting? Turn festival mode off</span><div class="sw" onclick="S.festival=false;render(1)"></div></div></div>`:'';
+  const clock=`<div class="clock" id="s-clock">${pin('N9')}<span class="ic">${cc[0]}</span><div><b>${h12(S.hour)} · ${s}</b><span>${cc[1]}<br><small style="opacity:.85">${cc[2]}</small></span></div></div>`;
+  // ---------- order by slot / persona ----------
+  let body;
+  if(S.mood){
+    const f=L(D.filter(d=>S.mood==='protein'?d.p>=20:d.tags.includes(S.mood)));
+    const ord=S.mood==='comfort'?sortBy(f,'c',1):f;
+    body=`<section><div class="sh"><div><h2>${MOODS.find(x=>x[0]===S.mood)[1]}</h2><div class="sub">${f.length} dishes · tap the pill again to clear</div></div></div></section>${ord.map(row).join('')}<div style="height:90px"></div>`;
+  }else{
+    let order;
+    if(H) order=late?[R.munch,R.trend,R.prot,R.budget]:lunch?[R.prot,R.bal,R.budget,R.trend]:bfast?[R.guilt,R.prot,R.budget,R.trend]:[R.smart,R.prot,R.budget,R.trend];
+    else order=late?[R.munch,R.trend,R.budget,R.prot]:lunch?[R.bal,R.trend,R.budget,R.prot]:bfast?[R.guilt,R.trend,R.budget,R.prot]:[R.smart,R.trend,R.budget,R.prot];
+    const promo=`<div class="promo"><div><b>SAVE100 · 50% off up to ₹100</b><span>+ free Classic Cold Coffee above ₹199 · a real item, never missing</span></div><div class="timer">02:49:52</div></div>`;
+    const pair=`<section id="s-pair" style="padding-bottom:0">${pin('N15')}<div class="sh"><h2>What are we in the mood for?</h2></div><div class="pair"><button class="pt h" onclick="openCat('Healthy')"><span class="e">🥗</span><div><b>Healthy</b><span>Clean, balanced, fuelling</span></div></button><button class="pt gf" onclick="openCat('Guilt Free')"><span class="e">😌</span><div><b>Guilt-free</b><span>Treats that behave</span></div></button></div></section>`;
+    const cats=`<section style="padding-top:0"><div class="grid">${CATS.map(([c,e])=>c==='Protein Rich'?`<div class="cat prot" onclick="openCat('${c}')"><div class="ci">${e}<span class="badge">23g</span></div><span>${c}</span></div>`:`<div class="cat" onclick="openCat('${c}')"><div class="ci">${e}</div>${c}</div>`).join('')}</div></section>`;
+    const tiles=`<section id="s-tiles" style="padding-top:0">${pin('N8')}<div class="t4"><button class="a"><span class="e">👨‍🍳</span>Gourmet<small>Chef specials</small></button><button class="b"><span class="e">✨</span>Fresh Arrivals<small>New today</small></button><button class="c"><span class="e">🏆</span>Bestsellers<small>Most loved</small></button><button class="d"><span class="e">💰</span>Under ₹99<small>Pocket-friendly</small></button></div></section>`;
+    body=order.join('')+promo+pair+cats+tiles+'<div style="height:100px"></div>';
+  }
+  return hdr()+liveStrip()+R.usual+R.start+`<div class="pills" id="s-mood">${pin(13)}${MOODS.map(([k,l])=>`<button class="pill ${S.mood===k?'on':''}" onclick="mood('${k}')">${l}</button>`).join('')}</div>`+clock+fest+body;
+}
+function liveStrip(){
+  if(!S.order||S.stage>=5)return '';
+  const st=S.stage,eta=Math.max(1,12-st*3);
+  return `<div class="live" id="s-live" onclick="go('track')">${pin('N5')}<span style="font-size:24px">🛵</span><div class="t"><b>${STEPS[Math.min(st,4)][0]} · ${eta} min</b><small>Tap to track · order #SW${S.order.id}</small></div>${st>=3?`<div class="otpchip"><small>YOUR OTP</small>4821</div>`:''}</div>`;
+}
+
+function catScreen(){
+  const c=S.cat;let list=L(D.filter(d=>d.cats.includes(c)));
+  if(!list.length)list=L(D).slice(0,4);
+  if(S.vf.length)list=list.filter(d=>S.vf.includes(d.t));
+  const gsub=c==='Guilt Free'?[['All','All'],['yogurt','🥣 Yogurt bowls'],['guilt','🫐 Smoothie bowls'],['smart','🍟 Smart treats']]:null;
+  if(gsub&&S.gs!=='All')list=list.filter(d=>d.tags.includes(S.gs));
+  const sbt={'Guilt Free':'Treats that behave','Healthy':'Clean, balanced, fuelling','Balanced Plates':'Protein + carbs + fibre + fats','Late-night':'Open till 4 AM'}[c];
+  return `<div class="back"><button onclick="back()">←</button>${c==='Late-night'?'Late-night munchies':c}</div>
+  ${c==='Protein Rich'?`<div class="protban">More <em>PROTEIN</em><br>per serve</div>`:''}${sbt?`<div class="sub" style="padding:10px 14px 0;font-size:12.5px">${sbt}</div>`:''}
+  ${gsub?`<div class="chips" style="padding:12px 14px 0;margin:0">${gsub.map(([k,l])=>`<button class="chip ${S.gs===k?'on':''}" onclick="S.gs='${k}';render(1)">${l}</button>`).join('')}</div>`:''}
+  <div class="fchips">${[['veg','Veg',''],['nv','Non-Veg','nv'],['egg','Egg','eg']].filter(x=>!S.festival||S.diet==='all'||x[0]==='veg').map(([k,l,cl])=>`<button class="fc ${S.vf.includes(k)?'on':''}" onclick="vfilt('${k}')"><span class="vd ${cl}" style="position:static"><i></i></span>${l}</button>`).join('')}</div>
+  ${list.map(row).join('')}<div style="height:90px"></div>`;
+}
+function cartScreen(){
+  const ids=Object.keys(S.cart),d=disc(),tot=sub()-d+5;
+  return `<div class="back"><button onclick="back()">←</button>Your cart</div>
+  <div class="box">${ids.map(id=>{const x=byId(id);return `<div class="li"><span class="e">${x.e}</span><div class="n">${x.n}<small>${x.p}g protein · ${x.c} cal</small></div>${addBtn(x)}<b>₹${x.pr*S.cart[id]}</b></div>`}).join('')||'<div class="sub">Cart is empty</div>'}
+   ${freeOn()?`<div class="free"><div class="li" style="border:0;padding:2px 0"><span class="e">☕</span><div class="n">Free Classic Cold Coffee<small>Real item · SKU CC-189 · in the dispatch check</small></div><b class="ok">FREE</b></div><small>If it's missing: 2× its value (₹378) as instant credit.</small></div>`:`<div class="sub" style="padding-top:8px">Add ₹${199-sub()} more to unlock a free Classic Cold Coffee</div>`}</div>
+  <div class="box bill"><div><span>Item total</span><span>₹${sub()}</span></div><div><span>SAVE100 (50% up to ₹100)</span><span class="ok">−₹${d}</span></div><div><span>Handling</span><span>₹5</span></div><div class="tot"><span>To pay</span><span>₹${tot}</span></div></div>
+  <div class="box"><b style="font-size:13px">📍 Delivering to</b><div class="sub" style="font-size:12.5px;margin-top:4px">8/A, 20th Main, Koramangala · ${S.addrOk?'<span class="ok">Pin confirmed ✔</span>':'<span style="color:var(--red);font-weight:700">Pin not confirmed yet</span>'}</div></div>
+  <div style="padding:6px 14px 20px"><button class="btn" onclick="${S.addrOk?"go('pay')":"go('addr')"}" ${ids.length?'':'disabled'}>${S.addrOk?'Proceed to pay · ₹'+tot:'Confirm delivery pin to continue'}</button></div>`;
+}
+function addrScreen(){
+  return `<div class="back"><button onclick="back()">←</button>Confirm delivery pin</div>
+  <div class="map"><svg viewBox="0 0 360 260"><rect width="360" height="260" fill="#e8efe9"/><g stroke="#fff" stroke-width="14" fill="none"><path d="M-10 60 L370 90"/><path d="M90 -10 L120 270"/><path d="M-10 200 L370 170"/><path d="M260 -10 L240 270"/></g><g fill="#cfe3d5"><rect x="140" y="104" width="90" height="56" rx="6"/><rect x="20" y="110" width="52" height="70" rx="6"/><rect x="270" y="104" width="70" height="50" rx="6"/></g><circle cx="180" cy="132" r="36" fill="#17a34a" opacity=".12"/></svg><div class="pin2">📍</div></div>
+  <div style="padding:14px"><div style="font-weight:800;font-size:15px">Is this your building?</div><div class="sub" style="font-size:12.5px;margin:3px 0 10px">8/A, 20th Main, detected from your GPS. One tap to confirm, nothing to type. We confirm this <b>before</b> the order goes out, so your rider never has to hunt for it. Saved once, never asked again.</div>
+  <input class="input" value="Flat 4B, near gate 2"><div style="height:12px"></div><button class="btn" onclick="S.addrOk=true;back();toast('Pin saved. Next orders can be 1-tap.')">Confirm pin</button></div>`;
+}
+function payScreen(){
+  const tot=sub()-disc()+5;
+  return `<div class="back"><button onclick="back()">←</button>Payment</div>
+  <div class="box"><div class="opt on" style="margin:0 0 8px"><span class="oi">📲</span><div><b>UPI</b><span>Pay via any UPI app</span></div></div><div class="opt" style="margin:0 0 8px"><span class="oi">💳</span><div><b>Card</b><span>Credit or debit</span></div></div><div class="opt" style="margin:0"><span class="oi">👛</span><div><b>Swish wallet · ₹${S.wallet}</b><span>Credits from refunds</span></div></div></div>
+  <div class="box" style="background:var(--gl);border-color:#bfe8cf"><b style="font-size:12.5px">🛡️ Payment protection</b><div class="sub" style="color:#14532d;margin-top:3px">Failed order? Auto-refund fires in 30 seconds. Your money is only released to the kitchen after you confirm delivery.</div></div>
+  <div style="padding:6px 14px 20px"><button class="btn" onclick="place()">Pay ₹${tot}</button>${S.payFail?'<div class="sub" style="text-align:center;margin-top:8px;color:var(--red);font-weight:700">Demo: payment failure is ON</div>':''}</div>`;
+}
+function failScreen(){
+  return `<div class="back">Order failed</div><div style="padding:30px 20px;text-align:center"><div style="font-size:54px">⚠️</div><h3 style="font-size:20px;margin:8px 0">Payment went through, order didn't</h3><div class="sub" style="font-size:13px;margin-bottom:18px">Kitchen couldn't accept your order. You don't need to do anything. We've already started your refund.</div>
+  <div class="box" style="text-align:left"><div style="font-weight:800" id="rf">⏳ Refunding ₹${S.order?S.order.total:0}…</div><div style="height:8px;background:#eef2ef;border-radius:9px;margin:10px 0;overflow:hidden"><div id="rfb" style="height:100%;width:0;background:var(--g);transition:width 5s linear"></div></div><div class="sub">Auto-refund SLA: 30 seconds (demo sped up). No ticket. No chasing support.</div></div>
+  <div style="display:flex;gap:10px;margin-top:10px"><button class="btn ghost" onclick="S.payFail=false;go('pay',1)">Try again</button><button class="btn" onclick="resetTo('home')">Back to home</button></div></div>`;
+}
+const STEPS=[['Order confirmed','Kitchen accepted your order'],['Preparing','Fresh, made to order in the Swish kitchen'],['Packed & dispatch check','Every item scanned, including free ones'],['Rider on the way','Heading to your confirmed pin'],['Rider at your door','Share your OTP to receive the order']];
+function trackScreen(){
+  const o=S.order,st=S.stage,eta=Math.max(0,12-Math.round(st*3));
+  return `<div class="eta"><div style="display:flex;justify-content:space-between;align-items:center"><button onclick="S.screen='home';S.stack=[];render()" style="font-weight:800;font-size:13px">← Home</button><button onclick="sheet('support')" style="background:#fff3;border-radius:99px;padding:4px 12px;font-weight:800;font-size:12px">🎧 Help</button></div>
+   <div style="font-weight:700;font-size:13px;margin-top:6px">${st>=5?'Delivered':'Arriving in'}</div><div class="big">${st>=5?'✔ Done':eta+' min'}</div><div style="font-size:12px;opacity:.9">${st>=5?'Confirmed with your OTP':'Order #SW'+o.id+' · ₹'+o.total}</div></div>
+  <div class="steps">${STEPS.map((s,i)=>`<div class="stepi ${st>i?'done':st===i?'now':''}"><div class="dot">${st>i?'✓':''}</div><div><b>${s[0]}</b><small>${s[1]}</small></div></div>`).join('')}</div>
+  ${st>=2?`<div class="box"><b style="font-size:13px">Dispatch check</b>${o.items.map(i=>`<div class="chk"><span class="ok">✔</span>${i}</div>`).join('')}${o.freeMissing?`<div class="chk" style="color:var(--red);font-weight:700"><span>✖</span>Free Classic Cold Coffee: missing</div>`:o.free?'<div class="chk"><span class="ok">✔</span>Free Classic Cold Coffee (SKU CC-189)</div>':''}</div>`:''}
+  ${st>=3&&st<5?`<div class="otp"><small>Your delivery code (also shown on the home screen)</small><div class="code">4 8 2 1</div><small>Say it at the door. That's the whole task. Nothing to tap, nothing to type.</small><div style="margin-top:8px"><button onclick="sheet('otpwhy')" style="font-size:11.5px;font-weight:800;text-decoration:underline">Why a code?</button></div></div>
+   <div class="box"><b style="font-size:13px">How should we hand it over?</b><div style="height:8px"></div>
+   ${[['door','🚪','Meet me at the door','Say the 4-digit code'],['leave','📸','Leave at my door','Photo proof instead of a code'],['guard','💂','Hand to guard / reception','Rider shares guard name + photo']].map(([k,i,t,s])=>`<button class="opt ${S.otpPref===k?'on':''}" onclick="S.otpPref='${k}';render(1)"><span class="oi">${i}</span><div><b>${t}</b><span>${s}</span></div></button>`).join('')}</div>`:''}
+  ${st===4?`<div style="padding:0 14px"><button class="btn ghost" onclick="deliver()">Simulate: rider confirms with code</button></div>`:''}
+  ${st>=5?`<div class="box" style="text-align:center"><div class="ok">Delivered and confirmed by you ✔</div><div class="sub">Payment released to the kitchen only now.</div><button class="btn" style="margin-top:10px" onclick="resetTo('home')">Back to home</button></div>`:''}<div style="height:30px"></div>`;
+}
+function detailSheet(d){
+  return `<div class="ov" onclick="closeSheet()"><div class="sheet" onclick="event.stopPropagation()">
+  <div class="img" style="background:${d.bg};height:150px;font-size:84px;border-radius:18px">${d.e}${vd(d.t)}</div>
+  <h3 style="margin-top:12px">${d.n}</h3><p style="margin-bottom:0">${d.d}</p>
+  <div class="macrogrid"><div class="mg ${d.p>=20?'hi':''}"><b>${d.p}g</b><span>Protein</span></div><div class="mg"><b>${d.c}</b><span>Calories</span></div><div class="mg"><b>${d.cb}g</b><span>Carbs</span></div><div class="mg"><b>${d.fi}g</b><span>Fibre</span></div><div class="mg"><b>${d.f}g</b><span>Fat</span></div></div>
+  <div class="row"><span class="pr" style="font-size:18px">₹${d.pr}</span><div style="width:140px">${qty(d.id)?`<div class="stp" style="justify-content:space-between"><button onclick="chg('${d.id}',-1,1)">−</button><span>${qty(d.id)}</span><button onclick="chg('${d.id}',1,1)">+</button></div>`:`<button class="btn" style="padding:10px" onclick="chg('${d.id}',1,1)">ADD</button>`}</div></div></div></div>`;
+}
+function menuSheet(){
+  const s=slot(S.hour);let order=[...MENU_ORDER[s]];
+  const rest=Object.keys(MENU_COUNTS).filter(k=>!order.includes(k)&&k!=='Healthy'&&k!=='Guilt Free');
+  const list=order.filter(k=>k!=='Healthy'&&k!=='Guilt Free').concat(rest);
+  return `<div class="ov" onclick="closeSheet()"><div class="sheet" onclick="event.stopPropagation()"><h3>Menu</h3><p>Sorted for ${h12(S.hour)} (${s}). Healthy and Guilt-free sit side by side at the top.</p>
+  <div class="pair"><button class="pt h" onclick="closeSheet();openCat('Healthy')"><span class="e">🥗</span><div><b>Healthy</b><span>${MENU_COUNTS.Healthy} items</span></div></button><button class="pt gf" onclick="closeSheet();openCat('Guilt Free')"><span class="e">😌</span><div><b>Guilt-free</b><span>${MENU_COUNTS['Guilt Free']} items</span></div></button></div>
+  ${list.map((k,i)=>`<button class="menurow ${i===0?'top':''}" onclick="closeSheet();openCat('${k}')">${k==='Late-night'?'Late-night munchies':k}${i===0?' · best for now':''}<span>${MENU_COUNTS[k]||10}</span></button>`).join('')}</div></div>`;
+}
+function lateSheet(){return `<div class="ov"><div class="sheet"><h3>⏱️ Your order is running late</h3><p>Sorry. Your kitchen is behind. You decide what happens next. <b>We don't cancel on you.</b> Decide within <b id="lt">5:00</b>.</p>
+  <button class="opt" onclick="lateAct('wait')"><span class="oi">⏳</span><div><b>Wait longer</b><span>Priority rider assigned · ₹30 credit for the delay</span></div></button>
+  <button class="opt" onclick="lateAct('swap')"><span class="oi">🔄</span><div><b>Swap kitchen</b><span>Re-route to the nearest kitchen with stock · ETA 9 min</span></div></button>
+  <button class="opt" onclick="lateAct('refund')"><span class="oi">💸</span><div><b>Instant refund</b><span>Full refund to source, in seconds</span></div></button></div></div>`}
+function freeSheet(){S.wallet+=378;return `<div class="ov" onclick="closeSheet()"><div class="sheet" onclick="event.stopPropagation()"><h3>☕ Your free coffee didn't make it</h3><p>Our dispatch scan caught it. You don't have to ask or prove anything.</p><div class="box" style="margin:0 0 12px;background:var(--gl);border-color:#bfe8cf"><div class="ok" style="font-size:20px">+ ₹378 credited</div><div class="sub">2× the ₹189 value. Already in your Swish wallet.</div></div><button class="btn" onclick="closeSheet()">Got it</button></div></div>`}
+function otpWhySheet(){return `<div class="ov" onclick="closeSheet()"><div class="sheet" onclick="event.stopPropagation()"><h3>Why a delivery code?</h3><p>1-star reviews say "Delivered" when nothing came. A code ends that, and it costs you about <b>2 seconds</b>.</p>
+  <div class="box" style="margin:0 0 10px"><div class="chk">✔ <span>Already on your home screen, no hunting</span></div><div class="chk">✔ <span>You never type or tap. You just <b>say 4 digits</b> at the door</span></div><div class="chk">✔ <span>Not home? Pick "Leave at door" (photo proof) or "Hand to guard"</span></div><div class="chk">✔ <span>Your money is released to the kitchen only after this step</span></div></div>
+  <div class="sub" style="margin-bottom:12px">Trade-off, honestly: a code adds ~2 seconds to the last 10 metres. A false "Delivered" costs a refund, a support ticket and a 1-star review. Same logic as Swiggy/Zomato OTP and Uber rides.</div><button class="btn" onclick="closeSheet()">Got it</button></div></div>`}
+function supportSheet(){
+  const o=[['🥡','Item missing','miss'],['⏱️','Order is late','late'],['📦','Marked delivered, didn\'t arrive','nd'],['💳','Money deducted, no order','pay'],['😕','Wrong or poor quality item','q']];
+  return `<div class="ov" onclick="closeSheet()"><div class="sheet" onclick="event.stopPropagation()" id="sup"><h3>What went wrong?</h3><p>Pick one. Most fixes happen instantly. No chat queue.</p>
+  ${o.map(([i,t,k])=>`<button class="opt" onclick="fixIt('${k}')"><span class="oi">${i}</span><div><b>${t}</b><span>Instant fix</span></div></button>`).join('')}
+  <div style="display:flex;gap:8px"><button class="btn ghost" style="font-size:13px;padding:11px" onclick="toast('Opening WhatsApp. Reply SLA: 2 minutes.')">💬 WhatsApp · 2 min</button><button class="btn ghost" style="font-size:13px;padding:11px" onclick="toast('A human agent is joining…')">🙋 Talk to a human</button></div></div></div>`;
+}
+
+/* =============================== RENDER =============================== */
+function render(keep){
+  const sc=$('#screen');const y=keep?sc.scrollTop:0;const s=S.screen;let h='';
+  if(s==='home')h=S.ver==='before'?homeBefore():homeAfter();
+  else if(s==='cat')h=catScreen();else if(s==='cart')h=cartScreen();else if(s==='addr')h=addrScreen();
+  else if(s==='pay')h=payScreen();else if(s==='fail')h=failScreen();else if(s==='track')h=trackScreen();
+  sc.innerHTML=h;sc.scrollTop=y;$('#clk').textContent=h12(S.hour);
+  const n=count(),tot=sub()-disc()+5,express=S.hist==='returning'&&S.addrOk;
+  const bar=['home','cat'].includes(s)&&n?`<div class="cartbar" onclick="go('cart')"><div>${n} item${n>1?'s':''} · ₹${tot}<small>${express?'Saved pin + UPI ready':'Extra savings applied'}</small></div>${express?`<button class="one" onclick="event.stopPropagation();place()">⚡ 1-tap order</button>`:'<div>View cart ›</div>'}</div>`:'';
+  const fab=s==='home'&&S.ver==='after'?`<button class="fab ${n?'up':''}" onclick="sheet('menu')">🍴 Menu</button>`:'';
+  $('#layer').innerHTML=(S.toast?`<div class="toast">${S.toast}</div>`:'')+fab+bar+(S.sheetHTML||'');
+  $('#phone').classList.toggle('showpins',S.pins&&S.ver==='after');
+  renderPanel();
+}
+function renderPanel(){
+  const seg=(items,cur,fn)=>`<div class="seg">${items.map(([k,l])=>`<button class="${cur===k?'on':''}" onclick="${fn}(${typeof k==='number'?k:`'${k}'`})">${l}</button>`).join('')}</div>`;
+  const tg=(l,on,fn)=>`<div class="tog" onclick="${fn}"><span>${l}</span><div class="sw ${on?'on':''}"></div></div>`;
+  $('#panel').innerHTML=`<h1>Swish, reimagined · v2</h1><div class="by">Built from a personal teardown + user journey review. Not an official Swish product.</div>
+  <div class="lbl">Mode to present</div>${seg([['fest','🪔 Navratri / festive'],['usual','🍽️ Usual (any other day)']],S.festival?'fest':'usual','setMode')}
+  <div class="sub" style="margin:-2px 0 6px">${S.festival?'Veg-first home, vrat picks, diet levels (Strict vrat / Veg / + Non-veg).':'Everyday home: veg and non-veg together, Meal Clock and persona drive the order.'}</div>
+  <div class="lbl">View</div>${seg([['before','Before (today)'],['after','After (my fixes)']],S.ver,'setVer')}
+  <div class="lbl">Time of day</div>${seg([[8,'Breakfast'],[13,'Lunch'],[20,'7–10 PM'],[1,'12–2 AM']],S.hour,'setHour')}
+  <div class="lbl">Persona</div>${seg([['healthy','Eats clean'],['craving','11 PM pizza person']],S.user,'setUser')}
+  ${seg([['returning','Returning user'],['new','New user']],S.hist,'setHist')}
+  ${tg('Show pins on screen',S.pins,'S.pins=!S.pins;render(1)')}
+  ${tg('Make next payment fail (demo)',S.payFail,'S.payFail=!S.payFail;render(1)')}
+  <div class="lbl">Round 2 · from my user-journey review</div>
+  ${R2.map(([n,t,w,k])=>`<button class="fix" onclick="demoN(${k})"><span class="n r2">${n}</span><div><b>${t}</b><span>${w}</span></div><span class="go">Show ›</span></button>`).join('')}
+  <div class="lbl">Round 1 · from my teardown</div>
+  ${R1.map(([n,t,w,k])=>`<button class="fix" onclick="demo('${k}',${n})"><span class="n">${n}</span><div><b>${t}</b><span>${w}</span></div><span class="go">Show ›</span></button>`).join('')}
+  <div class="note">Dishes, prices and macros are illustrative. Photos swapped for emoji. Bug quotes come from public Play Store 1-star reviews.</div>`;
+}
+
+/* =============================== ACTIONS =============================== */
+function go(s,replace){if(!replace)S.stack.push(S.screen);S.screen=s;render();$('#screen').scrollTop=0}
+function back(){if(window._otpNext&&S.screen==='addr'&&S.addrOk){window._otpNext=0;S.cart={};fakeOrder(4);return}S.screen=S.stack.pop()||'home';render()}
+function resetTo(s){clearInterval(S.timer);S.stack=[];S.screen=s;S.cart={};S.order=null;S.stage=0;render();$('#screen').scrollTop=0}
+function chg(id,n,det){S.cart[id]=Math.max(0,qty(id)+n);if(!S.cart[id])delete S.cart[id];if(det)S.sheetHTML=detailSheet(byId(id));render(1)}
+function detail(id){S.sheetHTML=detailSheet(byId(id));render(1)}
+function sheet(k){S.sheetHTML={support:supportSheet,late:lateSheet,free:freeSheet,menu:menuSheet,otpwhy:otpWhySheet}[k]();render(1);if(k==='late')lateTimer()}
+function closeSheet(){S.sheetHTML='';clearInterval(S.lt);S.paused=false;render(1)}
+function toast(m){S.toast=m;render(1);clearTimeout(S.tt);S.tt=setTimeout(()=>{S.toast=null;render(1)},2800)}
+function mood(k){S.mood=S.mood===k?null:k;render()}
+function openCat(c){S.cat=c;S.vf=[];S.gs='All';go('cat')}
+function vfilt(k){S.vf=S.vf.includes(k)?S.vf.filter(x=>x!==k):[...S.vf,k];render(1)}
+function setMode(m){S.festival=m==='fest';S.diet='veg';S.mood=null;S.screen='home';S.stack=[];S.sheetHTML='';S.ver='after';render();$('#screen').scrollTop=0}
+function setVer(v){S.ver=v;S.screen='home';S.stack=[];S.sheetHTML='';render()}
+function setHour(h){S.hour=+h;S.mood=null;S.munch='All';render(1)}
+function setUser(u){S.user=u;S.mood=null;render(1)}
+function setHist(h){S.hist=h;S.addrOk=h==='returning';render(1)}
+// "Pick for me": one tap picks the best dish for this hour and persona, then goes straight to the cart
+function decide(){
+  const s=slot(S.hour),H=S.user==='healthy';
+  const pool=L(D.filter(d=>H?(s==='Lunch'?d.tags.includes('bal'):s==='Dinner'?d.tags.includes('smart')||d.p>=22:d.p>=15&&!d.tags.includes('junk')):d.tags.includes('indulgent')||d.tags.includes('comfort')));
+  const d=(pool.length?pool:L(D))[0];
+  S.cart={};S.cart[d.id]=1;render(1);toast(`${d.e} ${d.n}: best pick for ${h12(S.hour)}. Tap the bar to order.`)
+}
+function snapshot(){const items=Object.entries(S.cart).map(([id,q])=>q+'× '+byId(id).n);S.order={id:Math.floor(1000+Math.random()*8999),items,total:sub()-disc()+5,free:freeOn(),freeMissing:false}}
+function place(){
+  snapshot();
+  if(S.payFail){S.screen='fail';S.stack=[];render();setTimeout(()=>{const b=$('#rfb');if(b)b.style.width='100%'},50);setTimeout(()=>{const r=$('#rf');if(r)r.innerHTML='✅ ₹'+S.order.total+' refunded automatically'},5200);return}
+  S.cart={};S.stack=[];S.screen='track';S.stage=0;render();startTrack();
+}
+function startTrack(){clearInterval(S.timer);S.timer=setInterval(()=>{if(S.paused)return;if(S.stage<4){S.stage++;render(1)}else clearInterval(S.timer)},3500)}
+function deliver(){S.stage=5;clearInterval(S.timer);render()}
+function lateTimer(){let t=300;clearInterval(S.lt);S.paused=true;S.lt=setInterval(()=>{t--;const e=$('#lt');if(e)e.textContent=Math.floor(t/60)+':'+String(t%60).padStart(2,'0');if(t<=0)clearInterval(S.lt)},1000)}
+function lateAct(k){clearInterval(S.lt);S.paused=false;S.sheetHTML='';
+  if(k==='refund'){resetTo('home');setTimeout(()=>toast('Instant refund done. No waiting, no ticket.'),50)}
+  else{render(1);toast(k==='wait'?'Priority rider assigned. ₹30 credited for the delay.':'Swapped to Koramangala Kitchen 2. New ETA 9 min.')}}
+function fixIt(k){
+  const m={miss:['Credited 2× the missing item\'s value in-app, instantly.','+ ₹378 in wallet'],nd:['Nothing is marked delivered without your OTP. Refund of the full order started.','Refund started'],pay:['Auto-refund fired. Back in your account within 30 seconds.','Refund in 30s'],q:['Instant credit for the item. No photo proof needed for the first claim.','Credited']};
+  if(k==='late'){sheet('late');return}
+  if(k==='miss')S.wallet+=378;
+  const [t,b]=m[k];$('#sup').innerHTML=`<h3>Fixed ✔</h3><p>${t}</p><div class="box" style="margin:0 0 12px;background:var(--gl);border-color:#bfe8cf"><div class="ok" style="font-size:18px">${b}</div><div class="sub">Support time: under 10 seconds</div></div><button class="btn" onclick="closeSheet()">Done</button>`}
+
+function fakeOrder(stage,opts={}){S.cart={d3:1,d2:1};S.addrOk=true;snapshot();Object.assign(S.order,opts);S.cart={};S.stack=['home'];S.screen='track';S.stage=stage;S.paused=false;render();startTrack()}
+function focus(id,pos){S.ver='after';S.screen='home';S.stack=[];S.mood=null;S.sheetHTML='';render();const e=document.getElementById(id);if(e){e.scrollIntoView({block:pos||'center'});e.classList.add('flash');setTimeout(()=>e.classList.remove('flash'),1700)}}
+function demo(k,n){S.pins=true;
+  if(k==='home'){const m={1:'s-prot',2:'s-prot',3:'s-prot',10:'s-usual',11:'s-trend',12:'s-clock',13:'s-mood'};
+    if(n===10){S.hist='returning';focus('s-usual','start')}
+    else if(n===2){S.festival=false;S.hour=13;S.user='healthy';focus('s-prot');setTimeout(()=>{const g=document.querySelector('.cat.prot');if(g){g.scrollIntoView({block:'center'});g.classList.add('flash')}},400)}
+    else focus(m[n])}
+  else if(k==='late'){fakeOrder(1);setTimeout(()=>sheet('late'),500)}
+  else if(k==='payfail'){S.payFail=true;S.cart={d3:1,d2:1};S.addrOk=true;S.stack=['home'];S.screen='pay';render()}
+  else if(k==='otp'){S.cart={d3:1,d2:1};S.addrOk=false;S.stack=['home','cart'];S.screen='addr';render();toast('Step 1: confirm the pin BEFORE ordering. Confirm to continue to OTP delivery.');window._otpNext=1}
+  else if(k==='free'){fakeOrder(2);setTimeout(()=>{S.order.freeMissing=true;sheet('free')},600)}
+  else if(k==='support'){if(S.screen!=='track')fakeOrder(3);setTimeout(()=>sheet('support'),300)}
+  else if(k==='details'){S.ver='after';S.screen='cat';S.cat='Sandwiches & Wraps';S.vf=[];S.stack=['home'];render();toast('"View dish details" on every dish in every category')}
+  render(1)}
+function demoN(k){S.pins=true;S.ver='after';
+  if(k===1){S.festival=true;S.hour=20;S.user='healthy';focus('s-fest','start')}
+  else if(k===2){S.hist='returning';S.addrOk=true;S.cart={d3:1,d2:1};S.screen='home';S.stack=[];S.sheetHTML='';render();toast('Returning user: saved pin + saved UPI → one tap places the order.')}
+  else if(k===16){S.hist='new';S.addrOk=false;S.cart={};focus('s-start','start');toast('New user: Top 3 or "Pick for me". GPS pin, UPI preselected.')}
+  else if(k===3){S.hour=20;S.user='healthy';focus('s-smart','start')}
+  else if(k===4){S.hour=13;S.user='healthy';S.festival=false;focus('s-bal','start')}
+  else if(k===5){fakeOrder(3);S.screen='home';S.stack=[];render();$('#screen').scrollTop=0;toast('OTP chip sits on the home screen. No digging into Orders.')}
+  else if(k===6){S.hist='returning';S.cart={};focus('s-usual','start')}
+  else if(k===7){S.mood=null;focus('s-mood','start');setTimeout(()=>mood('comfort'),400);toast('"Comfort food": soups, Maggi, pasta first. Not protein.')}
+  else if(k===8){focus('s-tiles','center');toast('One green family + one saffron accent. Four tiles, same size.')}
+  else if(k===9){S.hour=13;S.user='healthy';focus('s-clock','center')}
+  else if(k===10){S.hour=1;S.user='craving';focus('s-munch','start')}
+  else if(k===11){S.hour=1;S.user='craving';S.festival=false;focus('s-clock','center');toast('Craving-first mode: indulgent-friendly home, no lectures.')}
+  else if(k===12){S.hist='returning';focus('s-budget','center')}
+  else if(k===13){focus('s-pair','center');setTimeout(()=>{$('#screen').scrollTop+=200;render(1);sheet('menu')},500)}
+  else if(k===14){S.hour=8;S.user='healthy';S.screen='home';S.stack=[];render();$('#screen').scrollTop=500;sheet('menu')}
+  else if(k===15){focus('s-pair','center')}
+  render(1)}
+
+$('#screen').addEventListener('scroll',()=>{$('#phone').classList.toggle('scrolled',$('#screen').scrollTop>280)});
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,323 @@
+<title>Swish Experience PRD</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Layout concept: a spec you can speak from. Sticky contents rail on wide screens, one workstream per section, every workstream in the same order: problem, talk track, requirements, success. */
+:root{
+  --bg:#f6f8f5;--surface:#ffffff;--ink:#14201a;--mut:#5d6a62;--line:#dfe6e0;
+  --green:#15803d;--deep:#0b3d24;--soft:#e6f4ea;
+  --amber:#b45309;--amber-soft:#fdf0d5;--red:#b42318;--red-soft:#fdecea;
+  --row:#f1f4f2;
+  --display:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;
+  --body:'Figtree','Segoe UI',system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0d1511;--surface:#131e18;--ink:#e8f0ea;--mut:#9aaaa0;--line:#25342b;
+  --green:#4ade80;--deep:#0a2a1a;--soft:#173a26;--amber:#f2b34a;--amber-soft:#2f2410;--red:#f4a39b;--red-soft:#3a1a17;--row:#18241d;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0d1511;--surface:#131e18;--ink:#e8f0ea;--mut:#9aaaa0;--line:#25342b;
+  --green:#4ade80;--deep:#0a2a1a;--soft:#173a26;--amber:#f2b34a;--amber-soft:#2f2410;--red:#f4a39b;--red-soft:#3a1a17;--row:#18241d;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6;padding-inline:16px;padding-block:0 64px}
+.shell{max-width:1080px;margin-inline:auto;display:grid;grid-template-columns:minmax(0,1fr);gap:32px}
+@media(min-width:960px){.shell{grid-template-columns:200px minmax(0,1fr)}}
+nav.toc{display:none}
+@media(min-width:960px){nav.toc{display:block;position:sticky;top:24px;align-self:start;padding-top:44px;font-size:13px}
+ nav.toc a{display:block;color:var(--mut);text-decoration:none;padding:5px 0 5px 12px;border-left:2px solid var(--line)}
+ nav.toc a:hover,nav.toc a.on{color:var(--green);border-left-color:var(--green)}
+ nav.toc b{display:block;font:700 11px var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--mut);margin-bottom:8px}}
+main{min-width:0}
+.eyebrow{font:700 12px var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--green)}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(32px,6vw,50px);line-height:1.04;letter-spacing:-.02em;margin:8px 0 10px;text-wrap:balance}
+.meta{display:flex;flex-wrap:wrap;gap:8px 18px;color:var(--mut);font-size:14px;margin:0}
+.meta b{color:var(--ink);font-weight:600}
+header.hero{padding-block:44px 8px}
+section{padding-top:48px;scroll-margin-top:12px}
+h2{font-family:var(--display);font-size:clamp(24px,4vw,31px);letter-spacing:-.015em;line-height:1.1;margin:0 0 6px;text-wrap:balance}
+.sub{color:var(--mut);margin:0 0 18px;max-width:66ch}
+h3{font-family:var(--display);font-size:19px;margin:22px 0 6px}
+p{margin:0 0 12px;max-width:72ch}
+ul,ol{margin:0 0 12px;padding-left:20px;max-width:72ch}li{margin-block:4px}
+.tldr{background:var(--deep);color:#fff;border-radius:18px;padding:22px 24px;margin-top:22px}
+.tldr h2{color:#fff;font-size:22px}
+.tldr p,.tldr li{color:#e4f1e8;max-width:none}
+.ask{margin-top:12px;background:rgba(255,255,255,.1);border-radius:10px;padding:10px 14px;font-weight:600;color:#fff}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.grid>*{min-width:0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+.card h4{margin:0 0 4px;font-size:15px}
+.card p{margin:0;color:var(--mut);font-size:14.5px}
+.stat{font:800 28px var(--display);color:var(--green);line-height:1}
+.quote{border-left:4px solid var(--amber);background:var(--amber-soft);border-radius:0 10px 10px 0;padding:10px 14px;margin:10px 0;font-size:15px}
+.quote small{display:block;color:var(--mut);margin-top:2px}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface);margin-block:8px 16px}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:14px}
+th{font:700 11px var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--mut);text-align:left;padding:10px 12px;background:var(--row);border-bottom:1px solid var(--line)}
+td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td.id{font:700 12px var(--body);color:var(--green);white-space:nowrap}
+.pill{display:inline-block;font:700 11px var(--body);border-radius:99px;padding:2px 9px;white-space:nowrap}
+.must{background:var(--soft);color:var(--green)}.should{background:var(--amber-soft);color:var(--amber)}.could{background:var(--row);color:var(--mut)}
+.p0{background:var(--red-soft);color:var(--red)}.p1{background:var(--amber-soft);color:var(--amber)}.p2{background:var(--row);color:var(--mut)}
+.ws{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px;margin-block:20px 0}
+.wsh{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap;justify-content:space-between}
+.wsh h3{margin:0;font-size:23px}
+.tags{display:flex;gap:6px;flex-wrap:wrap}
+.talk{background:var(--amber-soft);border-radius:12px;padding:12px 16px;margin-block:14px}
+.talk small{display:block;font:700 11px var(--body);letter-spacing:.1em;text-transform:uppercase;color:var(--amber);margin-bottom:2px}
+.talk p{margin:0;max-width:none}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:6px}
+.metrics>div{background:var(--row);border-radius:10px;padding:10px 12px;min-width:0}
+.metrics b{display:block;font:700 11px var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--green);margin-bottom:2px}
+.metrics span{font-size:14px}
+.lbl{font:700 11px var(--body);letter-spacing:.1em;text-transform:uppercase;color:var(--mut);margin:16px 0 4px}
+.note{font-size:13.5px;color:var(--mut)}
+a.btn{display:inline-block;background:var(--deep);color:#fff;text-decoration:none;font-weight:700;padding:10px 16px;border-radius:10px;margin-top:6px}
+a.btn:focus-visible,nav.toc a:focus-visible{outline:3px solid var(--green);outline-offset:2px}
+.phase{display:grid;grid-template-columns:110px minmax(0,1fr);gap:14px;padding:14px 0;border-top:1px solid var(--line)}
+.phase:first-of-type{border-top:0}
+.phase b{font-family:var(--display);font-size:16px}
+@media(max-width:560px){.phase{grid-template-columns:1fr;gap:2px}.ws{padding:16px}}
+</style>
+
+<div class="shell">
+<nav class="toc" aria-label="Contents"><b>Contents</b>
+ <a href="#summary">Summary</a><a href="#problem">Problem and evidence</a><a href="#users">Who it is for</a><a href="#goals">Goals and non-goals</a><a href="#map">Solution map</a><a href="#ws">Workstreams</a><a href="#experiments">Experiments</a><a href="#roadmap">Roadmap</a><a href="#risks">Risks</a><a href="#open">Open questions</a><a href="#appendix">Appendix</a></nav>
+<main>
+<header class="hero">
+  <div class="eyebrow">Product requirements document</div>
+  <h1>Swish Experience PRD</h1>
+  <p class="meta"><span><b>Author</b> Aastha Gulati</span><span><b>Status</b> Draft for discussion</span><span><b>Basis</b> Personal teardown, Play Store reviews, user-journey review, working prototype</span></p>
+</header>
+
+<section id="summary" style="padding-top:20px">
+  <div class="tldr">
+    <h2>Summary</h2>
+    <p>Swish promises food in minutes. The product around that promise has gaps in three places: what happens when things go wrong, how fast a user finds what they came for, and how well the home understands who is opening it and when.</p>
+    <ul>
+      <li><b>Fix recovery first.</b> Support, refunds and delivery confirmation decide whether a bug becomes a 1-star review.</li>
+      <li><b>Make the home understand context.</b> Time of day, history, diet and festival all change what a user wants. Swish owns its kitchens, so it can tag and shape the menu better than anyone.</li>
+      <li><b>Cut the time to first add.</b> A fast delivery promise needs a fast order.</li>
+    </ul>
+    <div class="ask">The ask: agree the five workstreams, pick the first two experiments, and tell me which baselines I should work from.</div>
+  </div>
+</section>
+
+<section id="problem">
+  <h2>Problem and evidence</h2>
+  <p class="sub">What the product does today, seen from a user who matches Swish's target persona.</p>
+  <div class="grid">
+    <div class="card"><div class="stat">3 of 6</div><h4>bad reviews mention support</h4><p>From a pull of 1-star Play Store reviews over three months. Support turns every other bug into a 1-star.</p></div>
+    <div class="card"><div class="stat">6</div><h4>repeating bug patterns</h4><p>Silent cancels, payment taken without food, false "Delivered", missing freebies, absent support, inconsistent dish details.</p></div>
+    <div class="card"><div class="stat">Row 2</div><h4>where Protein Rich sits</h4><p>Position 4 in the second row of the category grid, behind a side-scroll, with a tile that blends into its own background.</p></div>
+  </div>
+  <h3>Voice of the user</h3>
+  <div class="quote">"Cancelled my order after an hour without asking."<small>Play Store 1-star reviews: Kiran K, Shilpa S</small></div>
+  <div class="quote">"Payment went through. Food didn't. Refund didn't come."<small>Play Store 1-star reviews: madhur, Shilpa</small></div>
+  <div class="quote">"It said Delivered and nothing came."<small>Play Store 1-star reviews: madhur, Kiran</small></div>
+  <div class="quote">"A Rs 150 cold coffee that never showed up. Twice."<small>Play Store 1-star review: PianoPianist</small></div>
+  <h3>What a screen recording of the current app shows</h3>
+  <ul>
+    <li>A large banner uses about a third of the first screen and pushes categories down.</li>
+    <li>Four tiles (Gourmet, Fresh Arrivals, Bestsellers, Under 99) sit in four unrelated colours, next to a pink offer and a lilac tile. Nothing stands out because everything does.</li>
+    <li>A floating Menu button sits mid-screen over dish cards.</li>
+    <li>Late Night Munchies and Maggi & Quick Bites are two long horizontal rows. Guilt Free is the last item in the Menu.</li>
+    <li>Reordering lives under Account, then My Orders. There is no usuals row on the home.</li>
+    <li>Dish cards show no macros. Protein only appears after opening a dish.</li>
+    <li>On a Navratri evening, a highlighted "dinner" row showed non-veg dishes.</li>
+  </ul>
+  <p class="note">Based on my own use of the app and public reviews. I have not seen Swish's internal data, so baselines below are blank on purpose.</p>
+</section>
+
+<section id="users">
+  <h2>Who it is for</h2>
+  <p class="sub">One core persona, in four situations that change what the home should show.</p>
+  <div class="grid">
+    <div class="card"><h4>Core persona</h4><p>Bangalore, Gen Z, corporate job, cares about protein, orders most weekday lunches and many late nights. A repeat customer.</p></div>
+    <div class="card"><h4>Returning user</h4><p>Has history. Wants their usual in one tap and a checkout with nothing to re-enter.</p></div>
+    <div class="card"><h4>New user</h4><p>Came for speed. Has no history, and the full menu is the first obstacle. Their first order decides retention.</p></div>
+    <div class="card"><h4>Festival user</h4><p>For example during Navratri: veg by default, some with no onion or garlic. Non-veg in a highlighted row reads as "the app doesn't know what day it is".</p></div>
+    <div class="card"><h4>Craving-first user</h4><p>The "11 PM pizza person". Not a health-first user, and should not be lectured.</p></div>
+  </div>
+</section>
+
+<section id="goals">
+  <h2>Goals and non-goals</h2>
+  <div class="grid">
+    <div class="card"><h4>Goals</h4><ul><li>Raise repeat orders per user</li><li>Cut the time from app open to first add-to-cart</li><li>Reduce support-driven 1-star reviews</li><li>Raise first-order conversion for new users</li></ul></div>
+    <div class="card"><h4>Non-goals</h4><ul><li>No change to the 10-minute delivery promise or kitchen model</li><li>No new pricing or discount strategy</li><li>No rebrand. The colour work is a tidy-up of the existing green identity</li><li>No heavy ML in phase one. Rules first</li></ul></div>
+    <div class="card"><h4>Principles</h4><ul><li>Recovery has to be as fast as delivery</li><li>Show, don't make the user hunt</li><li>Personalise gently, never block the user</li><li>Every claim on screen must be verifiable</li></ul></div>
+  </div>
+  <h3>Success metrics</h3>
+  <div class="tablewrap"><table><thead><tr><th>Level</th><th>Metric</th><th>Baseline</th><th>Target</th></tr></thead><tbody>
+    <tr><td>North star</td><td>Orders per active user per month, and 30-day repeat rate</td><td>To be pulled</td><td>Direction up, set after baseline</td></tr>
+    <tr><td>Trust</td><td>Share of 1-star reviews that mention support, delivery or refunds</td><td>3 of 6 in my sample</td><td>Halve in two quarters, to be validated</td></tr>
+    <tr><td>Speed</td><td>Median seconds from app open to first add-to-cart</td><td>To be pulled</td><td>Direction down</td></tr>
+    <tr><td>Acquisition</td><td>First-order conversion for new users</td><td>To be pulled</td><td>Direction up</td></tr>
+  </tbody></table></div>
+</section>
+
+<section id="map">
+  <h2>Solution map</h2>
+  <p class="sub">Five workstreams. Priority and effort are my first estimates, to be reviewed with engineering.</p>
+  <div class="tablewrap"><table><thead><tr><th>Workstream</th><th>What it fixes</th><th>Priority</th><th>Effort</th><th>Primary metric</th></tr></thead><tbody>
+    <tr><td><b>A. Recovery and trust</b></td><td>Cancels, refunds, false delivery, freebies, support</td><td><span class="pill p0">P0</span></td><td>Medium</td><td>Support-related 1-star share</td></tr>
+    <tr><td><b>B. Protein and health discovery</b></td><td>Buried protein, no macros, no healthy options at the right moment</td><td><span class="pill p0">P0</span></td><td>Small to medium</td><td>Conversion on health-intent rows</td></tr>
+    <tr><td><b>C. Personalisation and context</b></td><td>Usuals, trending, time of day, mood, budget, festival</td><td><span class="pill p1">P1</span></td><td>Medium to large</td><td>Session-to-order conversion by slot</td></tr>
+    <tr><td><b>D. Speed of ordering</b></td><td>Checkout steps, new-user choice overload, late-night scroll</td><td><span class="pill p1">P1</span></td><td>Small to medium</td><td>Seconds to first add, taps to order</td></tr>
+    <tr><td><b>E. Visual system and navigation</b></td><td>Colour chaos, floating Menu, missing dish details</td><td><span class="pill p0">P0</span></td><td>Small</td><td>CTR on key rows, scroll depth</td></tr>
+  </tbody></table></div>
+</section>
+
+<section id="ws">
+  <h2>Workstreams</h2>
+  <p class="sub">Each one lists the problem, what to say about it, the requirements, and how success is measured. The prototype shows every requirement working.</p>
+  <div id="wslist"></div>
+</section>
+
+<section id="experiments">
+  <h2>Experiment plan</h2>
+  <p class="sub">One primary metric and one guardrail per test. Run each for at least a full week to cover weekday and weekend patterns.</p>
+  <div class="tablewrap"><table><thead><tr><th>Test</th><th>Primary metric</th><th>Guardrail</th><th>Who</th></tr></thead><tbody>
+    <tr><td>Protein tile contrast and badge (B2)</td><td>CTR on the tile</td><td>CTR on neighbouring tiles</td><td>All users</td></tr>
+    <tr><td>Macros on dish cards (B3)</td><td>Add-to-cart from the card</td><td>Cart abandonment</td><td>All users, then health-intent</td></tr>
+    <tr><td>Pinned Protein Picks (B1)</td><td>Conversion from the protein row</td><td>Overall orders per session</td><td>Users with prior protein orders</td></tr>
+    <tr><td>Order again at top (C1)</td><td>Reorder rate and seconds to first add</td><td>Share of first-time dishes ordered</td><td>Returning users</td></tr>
+    <tr><td>Support hub instant fixes (A1)</td><td>Time to resolution, share solved with no agent</td><td>Abuse rate, cost per resolution</td><td>Users with an open issue</td></tr>
+    <tr><td>Late-order decision prompt (A2)</td><td>Involuntary cancellations</td><td>Refund cost per late order</td><td>Late orders in one cluster</td></tr>
+    <tr><td>Customer code delivery (A4)</td><td>False-delivered complaints</td><td>Seconds added at the door</td><td>One zone of riders</td></tr>
+    <tr><td>1-tap order (D1)</td><td>Taps and seconds to order</td><td>Cancellations in the first minute</td><td>Users with saved pin and UPI</td></tr>
+    <tr><td>New-user Top 3 and Pick for me (D2)</td><td>First-order conversion</td><td>First-order rating, refund rate</td><td>New users</td></tr>
+    <tr><td>Meal Clock rows (C3)</td><td>Conversion by time slot</td><td>Rows users scroll past</td><td>Time-slot cohorts</td></tr>
+    <tr><td>Festival layer (C8)</td><td>Conversion and AOV on festival days</td><td>Non-veg order drop from users who did not want veg-only</td><td>Festival window</td></tr>
+  </tbody></table></div>
+</section>
+
+<section id="roadmap">
+  <h2>Roadmap</h2>
+  <p class="sub">Sequenced by effort and risk. Durations are rough and need engineering input.</p>
+  <div>
+    <div class="phase"><b>Phase 1<br><span class="note">Weeks 1–2</span></b><div>Quick wins and the support hub: dish details on every dish (E3), tile contrast (B2), macros on cards (B3), colour clean-up and slim promo strip (E1), support instant-fix buttons (A1).</div></div>
+    <div class="phase"><b>Phase 2<br><span class="note">Weeks 3–6</span></b><div>Recovery and trust: late-order decision (A2), auto-refund (A3), free items as SKUs (A7), customer code and pin confirmation (A4, A5). Plus pinned Protein Picks (B1), Order again (C1) and 1-tap order (D1).</div></div>
+    <div class="phase"><b>Phase 3<br><span class="note">Weeks 7–12</span></b><div>Context layer: Meal Clock (C3), mood pills (C5), balanced plates, crave smart and yogurt bowls (B4–B6), new-user shortcuts (D2), late-night grid (D3), Menu button redesign (E2).</div></div>
+    <div class="phase"><b>Ongoing</b><div>Festival layer (C8) is a calendar-driven switch. Build it once and fill it for upcoming festival windows. Trending (C2), budget zone (C6) and craving-first mode (C7) follow once history and tagging are in place.</div></div>
+  </div>
+</section>
+
+<section id="risks">
+  <h2>Risks and mitigations</h2>
+  <div class="tablewrap"><table><thead><tr><th>Risk</th><th>Mitigation</th></tr></thead><tbody>
+    <tr><td>Instant refunds and 2x credits get abused</td><td>Tier by value and history, cap repeat claims, use the dispatch scan as evidence, track abuse as a guardrail</td></tr>
+    <tr><td>Kitchen swap is not always possible</td><td>Show the option only when a nearby kitchen has stock and a rider free. Otherwise offer wait or refund</td></tr>
+    <tr><td>Wrong persona inference annoys users</td><td>Keep the pills and menu always available, let users correct it, never label them out loud</td></tr>
+    <tr><td>Personalisation lowers discovery or basket size</td><td>Cap the usuals row at three items, keep first-time dish share and AOV as guardrails</td></tr>
+    <tr><td>Nutrition and "vrat" claims are wrong</td><td>Publish only what kitchens can verify, label approximate values, and check claims against food-labelling rules before launch</td></tr>
+    <tr><td>Customer code slows handover</td><td>Offer leave-at-door with photo and hand-to-guard, remember the choice, measure door time</td></tr>
+    <tr><td>Casual copy clashes with brand voice</td><td>Agree a tone guide first, A/B against plain labels</td></tr>
+  </tbody></table></div>
+</section>
+
+<section id="open">
+  <h2>Open questions for Swish</h2>
+  <p class="sub">Data and constraints that would change the plan.</p>
+  <ol>
+    <li>What are the current day-7 and day-30 retention and repeat rates, split by new and returning users?</li>
+    <li>What share of orders are late or cancelled, and what is the refund rate and cost?</li>
+    <li>How many support contacts per 100 orders, and which five reasons are the biggest?</li>
+    <li>How complete is dish-level tagging: calories, protein, veg, onion and garlic, comfort, junk?</li>
+    <li>Can the rider app move delivery completion to a customer code, and what are the gateway's refund options?</li>
+    <li>How much spare kitchen and rider capacity is there for a "swap kitchen" option?</li>
+    <li>How does Swish GO relate to the main app, and should these changes cover both?</li>
+  </ol>
+</section>
+
+<section id="appendix">
+  <h2>Appendix</h2>
+  <div class="grid">
+    <div class="card"><h4>Working prototype</h4><p>A clickable version of the home, category, cart, checkout and tracking flows with every requirement in this document, including festival and everyday modes.</p><a class="btn" href="./" target="_blank" rel="noopener">Open the prototype</a></div>
+    <div class="card"><h4>Method and limits</h4><p>Built from my own use of the app, a screen recording of the current home, a three-month pull of public 1-star reviews, and a prototype with illustrative dishes, prices and macros. No internal Swish data was used.</p></div>
+    <div class="card"><h4>Company context</h4><p>Public coverage reports Swish's own-kitchen model, rapid order growth and recent funding rounds, while several rivals have scaled back or paused quick food delivery. Figures vary by source and may be out of date.</p></div>
+  </div>
+</section>
+</main>
+</div>
+
+<script>
+const WS=[
+{id:'A',t:'Recovery and trust',pr:'P0',ef:'Medium',own:'Support, Ops, Rider app, Payments',
+ talk:'If I could fix only one thing, it would be support. In a 10-minute app, recovery slower than delivery is the real problem. Fix this first and the impact of every other bug shrinks.',
+ prob:'Reviews describe orders cancelled after an hour with no choice, payments taken with no food and no refund, "Delivered" with nothing at the door, free items that never arrive, and no usable support.',
+ req:[['A1','Must','In-app "What went wrong?" with instant-fix actions for the top five problems: item missing, order late, marked delivered but not received, money deducted with no order, wrong or poor-quality item.'],
+  ['A2','Must','When an order passes its ETA, prompt the user within seconds with three options: wait longer (with a small credit), swap kitchen, or instant refund. Show a 5-minute decision window. Never auto-cancel without the user\'s choice.'],
+  ['A3','Must','Start a refund automatically within 30 seconds of a failed order, with visible status. Release money to the kitchen only after delivery is confirmed.'],
+  ['A4','Must','Delivery completes with a 4-digit code the customer shares at the door. The rider cannot mark it delivered. Offer "leave at door" with photo proof and "hand to guard" as alternatives.'],
+  ['A5','Must','Confirm the delivery pin on a map before the order is placed, using GPS as the default. Save it for next time.'],
+  ['A6','Should','Show the order code and ETA on the home screen while an order is live, so the user never hunts for it.'],
+  ['A7','Must','Treat free items as real SKUs in the dispatch check. If one is missed, credit 2x its value in-app instantly.'],
+  ['A8','Should','Reply to exceptions on WhatsApp within two minutes, with a human handoff when the instant fix does not apply.']],
+ ac:['Given an order passes its ETA, the user sees the decision prompt and no cancellation happens without their choice.','Given a failed payment, a refund is initiated and visible within 30 seconds.','Given a delivery, the order cannot reach "Delivered" without the customer code or a photo-proof route.','Given a missed freebie, 2x its value appears in the wallet with no user action.'],
+ m:[['Primary','Share of 1-star reviews citing support, delivery or refunds'],['Secondary','Time to resolution. Share of issues solved with no agent. Repeat rate within 7 days after an incident'],['Guardrail','Refund cost per order. Abuse rate. Seconds added at the door']]},
+{id:'B',t:'Protein and health discovery',pr:'P0',ef:'Small to medium',own:'Product, Design, Kitchen tagging',
+ talk:'I am the persona you are building for, and this is where I felt it most. I spent 15 seconds hunting for the one section I came for, and then ordered whatever was loudest.',
+ prob:'Protein Rich sits in row 2, behind a side-scroll, in a tile that fades into itself. Dish cards show no macros. Healthy and guilt-free options appear late, even in the morning when someone plans a smoothie bowl.',
+ req:[['B1','Must','Pin a "Protein Picks" row near the top at breakfast (7–9), lunch (12–3) and dinner (7–10), showing dishes of 22g or more protein.'],
+  ['B2','Must','Redesign the Protein Rich tile with real contrast: darker background and a badge colour that stands apart.'],
+  ['B3','Must','Show a macro line on every dish card, for example "28g protein, 420 cal". Highlight protein only at 20g or more.'],
+  ['B4','Should','At lunch, show "Balanced plates" with a small bar for protein, carbs, fibre and fats.'],
+  ['B5','Should','Between 7 and 10 PM, show "Crave smart": lighter versions of junk food, such as baked fries or protein mac and cheese, with verified calorie tags.'],
+  ['B6','Should','Sort Guilt Free first in the Menu when relevant and lead the breakfast home with it. Add a yogurt-bowl range (mango, honey almond granola, choco peanut butter protein, blueberry chia, cucumber raita, dry fruit, strawberry cheesecake) with filter chips.'],
+  ['B7','Could','Test Healthy and Guilt-free as two equal tiles side by side on the home and at the top of the Menu.'],
+  ['B8','Must','Dependency: kitchens tag every dish with calories, protein, carbs, fibre, fat, and diet flags.']],
+ ac:['Given lunchtime and a user with protein orders, Protein Picks is the first or second row.','Every dish card shows a macro line, or hides it only where data is missing.','Every number on screen traces to a kitchen-verified value.'],
+ m:[['Primary','Conversion from the protein row and the Protein tile CTR'],['Secondary','Seconds to first add for health-intent users. Share of orders from Guilt Free in the morning'],['Guardrail','Overall orders per session. AOV. Yogurt-bowl wastage']]},
+{id:'C',t:'Personalisation and context',pr:'P1',ef:'Medium to large',own:'Product, Data, Kitchen tagging',
+ talk:'10-minute delivery is more impulse-driven and more context-sensitive than 45-minute delivery. Swish owns its kitchens, so it can tag every dish and go much deeper than a shallow time-of-day rotation.',
+ prob:'The home looks the same at 8 AM and 1 AM, for a returning user and a first-timer, and on a festival day. Reordering is buried in Account.',
+ req:[['C1','Must','For returning users, show an "Order again" row with their top three items at the very top, under the search bar. New users see a different row instead.'],
+  ['C2','Should','Show "Trending near you": what the user\'s 1 km area ordered in the last hour, only for in-stock dishes.'],
+  ['C3','Must','Meal Clock: choose the home\'s rows by time slot and by a simple behaviour type from recent orders. Start with rules, not ML.'],
+  ['C4','Could','Short slot-specific lines under the clock, in a tone agreed with the brand, for example "Protein ke paglu? We\'ve got you covered" at lunch.'],
+  ['C5','Should','Persistent mood pills: Comfort food, Protein rich, Full meal, Junk fix, Something sweet, Something spicy. One tap filters the home. No blocking modal. Comfort shows soups, Maggi and pasta.'],
+  ['C6','Could','After about five orders, show a row of dishes within roughly 20% of the user\'s average spend.'],
+  ['C7','Should','A craving-first home for users whose history leans indulgent, without lectures.'],
+  ['C8','Must','Festival layer: during a festival window, default the home to veg everywhere, including highlighted rows. Offer three levels (Strict vrat, Veg, + Non-veg), where non-veg is opt-in and shown with a red mark. The header VEG chip also toggles it. Outside festivals, the usual home applies.']],
+ ac:['Given a returning user, "Order again" appears above the mood pills and shows their top three items.','Given a festival window and default settings, no non-veg dish appears in any highlighted row.','Given a user who opts in to non-veg, those dishes show a clear red mark.'],
+ m:[['Primary','Session-to-order conversion by time slot. Reorder rate'],['Secondary','Seconds to first add. Pill tap rate. Festival-day conversion and AOV'],['Guardrail','First-time dish share. Complaints about irrelevant suggestions. Non-veg order drop for users who did not want veg-only']]},
+{id:'D',t:'Speed of ordering',pr:'P1',ef:'Small to medium',own:'Product, Design, Payments',
+ talk:'A 7-minute promise dies in a 9-tap checkout. And new users come for speed too, so their choice has to be quick, because their first order decides whether they stay.',
+ prob:'Returning users repeat steps they have already done. New users face the full menu with no history. Late-night browsing needs long scrolls.',
+ req:[['D1','Should','For users with a confirmed pin and saved UPI, show a "1-tap order" button on the cart bar, with the total and address visible and a short undo window.'],
+  ['D2','Should','For new users, show "Start with these": the top three nearby with live counts, and a "Pick for me" button that adds the best dish for the hour to the cart but never places the order. Detect the pin from GPS and pre-select UPI.'],
+  ['D3','Should','At night, replace the two long late-night rows with a compact 2x2 grid, chips for Maggi and noodles, sandwiches, bites and sweet, and a "See all" link.'],
+  ['D4','Must','Audit the current taps from open to order and set a target after the baseline is known.']],
+ ac:['Given a returning user with saved details, an order can be placed in one tap from the cart bar.','Given a new user, "Pick for me" adds one dish to the cart and nothing is charged until they confirm.'],
+ m:[['Primary','Seconds from app open to first add. Taps from add to order placed'],['Secondary','First-order conversion for new users. Cart abandonment'],['Guardrail','Cancellations in the first minute. First-order rating']]},
+{id:'E',t:'Visual system and navigation',pr:'P0',ef:'Small',own:'Design, Front-end',
+ talk:'The product should look like it was considered. When four tiles use four unrelated colours, nothing stands out and a food app people trust starts to feel cheap.',
+ prob:'The home shows a large banner, four unrelated pastel tiles, a pink offer and a floating Menu over content. "View dish details" is missing in several categories.',
+ req:[['E1','Must','One green family plus one warm accent, with neutrals for everything else. Keep Gourmet, Fresh Arrivals, Bestsellers and Under 99, but redo them at one size and shape in that palette. Turn the large banner into a slim promo strip.'],
+  ['E2','Should','Dock the Menu button to the bottom-right, show it only after scrolling, and sort its list by time of day with Healthy and Guilt-free at the top.'],
+  ['E3','Must','Show "View dish details" on every dish in every category.'],
+  ['E4','Must','No element may overlap readable content, including floating buttons.']],
+ ac:['Given any category, every dish has a working details view.','Given the home, the first screen shows search, the top rows and the category tiles without a banner pushing them down.'],
+ m:[['Primary','CTR on the rows and tiles that matter'],['Secondary','Scroll depth. Time to first tap. Session-to-order conversion'],['Guardrail','Offer redemption. Brand recognition']]}
+];
+const pri={P0:'p0',P1:'p1',P2:'p2'},lev={Must:'must',Should:'should',Could:'could'};
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+document.getElementById('wslist').innerHTML=WS.map(w=>`<article class="ws" id="ws-${w.id}">
+ <div class="wsh"><h3>${w.id}. ${esc(w.t)}</h3><div class="tags"><span class="pill ${pri[w.pr]}">${w.pr}</span><span class="pill could">Effort: ${esc(w.ef)}</span><span class="pill could">${esc(w.own)}</span></div></div>
+ <div class="lbl">Problem</div><p>${esc(w.prob)}</p>
+ <div class="talk"><small>Talk track</small><p>${esc(w.talk)}</p></div>
+ <div class="lbl">Requirements</div>
+ <div class="tablewrap"><table><thead><tr><th>ID</th><th>Level</th><th>Requirement</th></tr></thead><tbody>${w.req.map(r=>`<tr><td class="id">${r[0]}</td><td><span class="pill ${lev[r[1]]}">${r[1]}</span></td><td>${esc(r[2])}</td></tr>`).join('')}</tbody></table></div>
+ <div class="lbl">Acceptance criteria</div><ul>${w.ac.map(a=>`<li>${esc(a)}</li>`).join('')}</ul>
+ <div class="lbl">Success measures</div><div class="metrics">${w.m.map(m=>`<div><b>${m[0]}</b><span>${esc(m[1])}</span></div>`).join('')}</div>
+</article>`).join('');
+// highlight current section in the contents rail
+const links=[...document.querySelectorAll('nav.toc a')];
+if('IntersectionObserver' in window){
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){links.forEach(l=>l.classList.toggle('on',l.getAttribute('href')==='#'+e.target.id))}}),{rootMargin:'-20% 0px -70% 0px'});
+  links.forEach(l=>{const t=document.querySelector(l.getAttribute('href'));if(t)io.observe(t)});
+}
+</script>
